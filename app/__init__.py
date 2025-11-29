@@ -4,6 +4,7 @@ from .core.config import Config
 from .core import db, logger
 
 from app.routes import auth
+from app.routes import user
 from app.models.user import get_user_by_id
 
 login_manager = LoginManager()
@@ -24,6 +25,7 @@ def create_app():
     login_manager.init_app(app)
     
     app.register_blueprint(auth.bp)
+    app.register_blueprint(user.bp)
 
     @app.route('/')
     def index():

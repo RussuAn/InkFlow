@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Налаштування профілю | InkFlow{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 0 auto; padding-bottom: 3rem;">
+    
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+        <h2 style="margin: 0;">Налаштування профілю</h2>
+        <a href="{{ url_for('user.profile') }}" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">&larr; Назад до профілю</a>
+    </div>
+    
+    <div style="background: var(--bg-card); padding: 2.5rem; border-radius: 16px; box-shadow: var(--shadow);">
+        
+        <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            
+            <h3 style="font-size: 1.1rem; color: var(--accent); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Основна інформація</h3>
+
+            <div style="margin-bottom: 1.5rem;">
+                {{ form.display_name.label(style="display: block; margin-bottom: 0.5rem; font-weight: 600;") }}
+                {{ form.display_name(style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-body); color: var(--text-main); font-size: 1rem;") }}
+                <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 5px;">Ваше публічне ім'я (може бути будь-яким).</div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                {{ form.username.label(style="display: block; margin-bottom: 0.5rem; font-weight: 600;") }}
+                
+                <div style="position: relative;">
+                    <span style="position: absolute; left: 10px; top: 11px; color: var(--text-muted);">@</span>
+                    {{ form.username(style="width: 100%; padding: 10px 10px 10px 30px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-body); color: var(--text-main); font-size: 1rem;") }}
+                </div>
+                
+                {% if form.username.errors %}
+                    {% for error in form.username.errors %}
+                        <div style="color: #e74c3c; font-size: 0.85rem; margin-top: 5px;">{{ error }}</div>
+                    {% endfor %}
+                {% else %}
+                    <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 5px;">Унікальний ідентифікатор для входу та посилань.</div>
+                {% endif %}
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                {{ form.avatar.label(style="display: block; margin-bottom: 0.5rem; font-weight: 600;") }}
+                
+                <div style="background: var(--bg-body); padding: 15px; border-radius: 8px; border: 1px dashed var(--border); display: flex; align-items: center; gap: 10px;">
+                    {{ form.avatar(style="width: 100%; color: var(--text-muted);") }}
+                </div>
+                
+                {% if form.avatar.errors %}
+                    {% for error in form.avatar.errors %}
+                        <div style="color: #e74c3c; font-size: 0.85rem; margin-top: 5px;">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <h3 style="font-size: 1.1rem; color: var(--accent); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-top: 2rem;">Про мене</h3>
+
+            <div style="margin-bottom: 2rem;">
+                {{ form.bio(style="width: 100%; min-height: 150px; padding: 15px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-body); color: var(--text-main); font-family: inherit; line-height: 1.5; resize: vertical;", placeholder="Розкажіть про свої улюблені жанри...") }}
+                
+                {% if form.bio.errors %}
+                    {% for error in form.bio.errors %}
+                        <div style="color: #e74c3c; font-size: 0.85rem; margin-top: 5px;">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: center; padding-top: 1rem; border-top: 1px solid var(--border);">
+                {{ form.submit(style="background: var(--text-main); color: var(--bg-body); padding: 12px 35px; border: none; border-radius: 30px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: opacity 0.2s;") }}
+                
+                <a href="{{ url_for('user.profile') }}" style="color: var(--text-muted); text-decoration: none; padding: 10px 20px;">Скасувати</a>
+            </div>
+            
+        </form>
+    </div>
+</div>
+{% endblock %}
