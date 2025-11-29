@@ -5,46 +5,44 @@ COLLATE utf8mb4_unicode_ci;
 USE inkflow_db;
 
 CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,      -- Унікальний номер паспорта
-    username VARCHAR(50) NOT NULL UNIQUE,   -- Логін (має бути унікальним)
-    email VARCHAR(100) NOT NULL UNIQUE,     -- Пошта
-    password_hash VARCHAR(255) NOT NULL,    -- Пароль (зашифрований, ми не бачимо "12345")
-    avatar_url VARCHAR(255) DEFAULT NULL,   -- Посилання на картинку аватарки
-    bio TEXT,                               -- Опис профілю ("Люблю каву і детективи")
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    avatar_url VARCHAR(255) DEFAULT NULL,
+    bio TEXT,
 
-    role ENUM('user', 'admin') DEFAULT 'user', -- Хто це? Адмін чи простий смертний?
+    role ENUM('user', 'admin') DEFAULT 'user',
 
-    -- Фінанси та Гейміфікація
-    balance INT DEFAULT 0,                  -- Гаманець (скільки монет на рахунку)
-    streak_count INT DEFAULT 0,             -- Скільки днів підряд заходив
-    last_login_date DATE DEFAULT NULL,      -- Дата останнього входу (щоб рахувати дні)
+    balance INT DEFAULT 0,
+    streak_count INT DEFAULT 0,
+    last_login_date DATE DEFAULT NULL,
 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- Коли зареєструвався
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE books (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,            -- Назва книги
-    author VARCHAR(100) NOT NULL,           -- Автор
-    description TEXT,                       -- Анотація (про що книга)
-    cover_image VARCHAR(255),               -- Назва файлу обкладинки (напр. "dune.jpg")
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(100) NOT NULL,
+    description TEXT,
+    cover_image VARCHAR(255),
 
     -- Файлова частина
-    file_path VARCHAR(255),                 -- Назва файлу для скачування (напр. "dune.pdf")
-    price_coins INT DEFAULT 0,              -- Ціна скачування (0 = безкоштовно)
+    file_path VARCHAR(255),
+    price_coins INT DEFAULT 0,
 
-    views_count INT DEFAULT 0,              -- Лічильник переглядів (для "Топ книг")
+    views_count INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE chapters (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    book_id INT NOT NULL,                   -- До якої книги належить цей розділ?
-    title VARCHAR(255) NOT NULL,            -- Назва розділу (напр. "Розділ 1. Початок")
-    content LONGTEXT NOT NULL,              -- САМ ТЕКСТ КНИГИ (тут багато літер)
-    order_number INT NOT NULL,              -- Номер по порядку (щоб розділи не переплутались)
+    book_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    content LONGTEXT NOT NULL,
+    order_number INT NOT NULL,
 
-    -- Зв'язок: Якщо видалити книгу, зникнуть і її розділи (CASCADE)
     FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
 );
 
@@ -53,32 +51,26 @@ CREATE TABLE library_items (
     user_id INT NOT NULL,
     book_id INT NOT NULL,
 
-    -- ТВОЇ СТАТУСИ (Полиці):
     status ENUM('planned', 'reading', 'completed', 'dropped') DEFAULT 'planned',
-    -- 'planned' = Прочитати пізніше
-    -- 'reading' = Читаю зараз
-    -- 'completed' = Прочитано
-    -- 'dropped' = Кинув читати
 
-    is_favorite BOOLEAN DEFAULT FALSE,      -- Чи натиснув "Сердечко"? (Так/Ні)
+    is_favorite BOOLEAN DEFAULT FALSE,
 
     added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
 
-    -- Захист від дублікатів: Не можна додати одну книгу двічі в список
     UNIQUE KEY unique_library_entry (user_id, book_id)
 );
 
 CREATE TABLE reading_progress (
     user_id INT NOT NULL,
     book_id INT NOT NULL,
-    chapter_id INT NOT NULL,                -- На якому розділі?
-    scroll_position INT DEFAULT 0,          -- На якому пікселі (висота прокрутки)?
+    chapter_id INT NOT NULL,
+    scroll_position INT DEFAULT 0,
     last_read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    PRIMARY KEY (user_id, book_id),         -- Один запис на одну книгу для юзера
+    PRIMARY KEY (user_id, book_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
     FOREIGN KEY (chapter_id) REFERENCES chapters(id) ON DELETE CASCADE
@@ -86,12 +78,12 @@ CREATE TABLE reading_progress (
 
 CREATE TABLE purchases (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    buyer_id INT NOT NULL,                  -- Хто платив гроші (з кого списали)
-    receiver_id INT NOT NULL,               -- Кому дісталася книга (для подарунків)
-    book_id INT NOT NULL,                   -- Яку книгу купили
-    price_paid INT NOT NULL,                -- Скільки заплатили (історія цін важлива)
+    buyer_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    book_id INT NOT NULL,
+    price_paid INT NOT NULL,
 
-    is_gift BOOLEAN DEFAULT FALSE,          -- Це подарунок?
+    is_gift BOOLEAN DEFAULT FALSE,
     purchased_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (buyer_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -103,7 +95,7 @@ CREATE TABLE quotes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     book_id INT NOT NULL,
-    selected_text TEXT NOT NULL,            -- Текст, який юзер виділив
+    selected_text TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
