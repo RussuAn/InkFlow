@@ -3,3 +3,5 @@ mysql-connector-python
 Flask-Login
 Werkzeug
 python-dotenv
+Flask-WTF
+email-validator
