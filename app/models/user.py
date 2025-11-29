@@ -77,3 +77,24 @@ def get_user_by_id(user_id):
             balance=user_data['balance']
         )
     return None
+
+def get_user_by_username(username):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    
+    query = "SELECT * FROM users WHERE username = %s"
+    cursor.execute(query, (username,))
+    user_data = cursor.fetchone()
+    cursor.close()
+    
+    if user_data:
+        return User(
+            id=user_data['id'],
+            username=user_data['username'],
+            email=user_data['email'],
+            password_hash=user_data['password_hash'],
+            role=user_data['role'],
+            avatar_url=user_data['avatar_url'],
+            balance=user_data['balance']
+        )
+    return None
