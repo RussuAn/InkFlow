@@ -2,6 +2,8 @@ from flask import Flask, render_template
 from .core.config import Config
 from .core import db, logger
 
+from app.routes import auth
+
 def create_app():
     app = Flask(__name__, 
                 template_folder='frontend/templates',
@@ -11,6 +13,8 @@ def create_app():
 
     logger.setup_logger(app)
     db.init_app(app)
+    
+    app.register_blueprint(auth.bp)
 
     @app.route('/')
     def index():
