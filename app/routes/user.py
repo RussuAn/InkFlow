@@ -4,6 +4,7 @@ from flask import Blueprint, render_template, redirect, request, url_for, flash,
 from flask_login import login_required, current_user
 from app.forms.profile import EditProfileForm
 from app.models.user import update_user_profile
+from app.models.library import get_books_by_shelf
 
 
 bp = Blueprint('user', __name__, url_prefix='/user')
@@ -29,8 +30,15 @@ def profile():
         avatar_file = url_for('static', filename='uploads/avatars/' + current_user.avatar_url)
     else:
         avatar_file = f"https://ui-avatars.com/api/?name={current_user.username}&background=random&size=128"
-        
-    return render_template('user/profile.html', avatar_file=avatar_file)
+    
+    books_reading = get_books_by_shelf(current_user.id, 'reading')
+    books_completed = get_books_by_shelf(current_user.id, 'completed')
+    
+
+    return render_template('user/profile.html', 
+                           avatar_file=avatar_file,
+                           books_reading=books_reading,
+                           books_completed=books_completed)
 
 
 @bp.route('/edit', methods=['GET', 'POST'])

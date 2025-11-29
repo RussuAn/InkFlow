@@ -3,55 +3,103 @@
 {% block title %}{{ book.title }} | InkFlow{% endblock %}
 
 {% block content %}
-<div style="padding: 2rem 0; max-width: 900px; margin: 0 auto;">
+<div style="padding: 2rem 0; max-width: 1000px; margin: 0 auto;">
     
     <div style="display: flex; gap: 3rem; flex-wrap: wrap;">
         
         <div style="flex: 1; min-width: 280px; max-width: 350px;">
-            <div style="aspect-ratio: 2/3; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin-bottom: 1.5rem;">
+            
+            <div style="aspect-ratio: 2/3; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin-bottom: 1.5rem; position: relative;">
                 <img src="{{ url_for('static', filename='uploads/covers/' + book.cover_image) }}" 
                      alt="{{ book.title }}" 
                      style="width: 100%; height: 100%; object-fit: cover;">
             </div>
             
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button style="width: 100%; padding: 14px; background: var(--text-main); color: var(--bg-body); border: none; border-radius: 30px; font-weight: 600; font-size: 1rem; cursor: pointer;">
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 2rem;">
+                <button style="width: 100%; padding: 14px; background: var(--text-main); color: var(--bg-body); border: none; border-radius: 30px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: opacity 0.2s;">
                     Читати уривок
                 </button>
                 
                 {% if book.price_coins == 0 %}
                     <a href="{{ url_for('static', filename='uploads/books/' + book.file_path) }}" download 
-                       style="display: block; text-align: center; width: 100%; padding: 14px; background: transparent; border: 2px solid var(--text-main); color: var(--text-main); border-radius: 30px; font-weight: 600; text-decoration: none;">
-                        Завантажити (PDF/EPUB)
+                       style="display: block; text-align: center; width: 100%; padding: 14px; background: transparent; border: 2px solid var(--text-main); color: var(--text-main); border-radius: 30px; font-weight: 600; text-decoration: none; transition: background 0.2s;">
+                        ⬇️ Завантажити
                     </a>
                 {% else %}
-                    <button style="width: 100%; padding: 14px; background: var(--accent); color: white; border: none; border-radius: 30px; font-weight: 600; cursor: pointer;">
+                    <button style="width: 100%; padding: 14px; background: var(--accent); color: white; border: none; border-radius: 30px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                         Купити за {{ book.price_coins }} 🪙
                     </button>
                 {% endif %}
             </div>
+
+            {% if current_user.is_authenticated %}
+            <div style="padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                <p style="margin-bottom: 1rem; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Додати на полицю</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <a href="{{ url_for('library.update_status', book_id=book.id, status='planned') }}" 
+                       class="shelf-btn {% if current_status == 'planned' %}active{% endif %}">
+                       📅 В планах
+                    </a>
+
+                    <a href="{{ url_for('library.update_status', book_id=book.id, status='reading') }}" 
+                       class="shelf-btn {% if current_status == 'reading' %}active{% endif %}">
+                       📖 Читаю
+                    </a>
+
+                    <a href="{{ url_for('library.update_status', book_id=book.id, status='completed') }}" 
+                       class="shelf-btn {% if current_status == 'completed' %}active{% endif %}">
+                       ✅ Прочитано
+                    </a>
+                    
+                    <a href="{{ url_for('library.update_status', book_id=book.id, status='dropped') }}" 
+                       class="shelf-btn {% if current_status == 'dropped' %}active{% endif %}">
+                       ❌ Кинув
+                    </a>
+                </div>
+            </div>
+            {% else %}
+                <div style="text-align: center; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem;">
+                    <a href="{{ url_for('auth.login', next=request.path) }}" style="color: var(--accent); font-weight: bold;">Увійдіть</a>, щоб додати книгу на свою полицю.
+                </div>
+            {% endif %}
+
         </div>
 
         <div style="flex: 2; min-width: 300px;">
+            
             <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; line-height: 1.2;">{{ book.title }}</h1>
-            <h3 style="font-size: 1.2rem; color: var(--accent); margin-bottom: 2rem; font-weight: 400;">{{ book.author }}</h3>
             
-            <div style="background: var(--bg-card); padding: 2rem; border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 2rem;">
-                <h4 style="margin-bottom: 1rem; font-size: 1rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px;">Про книгу</h4>
-                <p style="line-height: 1.8; color: var(--text-main); white-space: pre-line;">{{ book.description }}</p>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                <h3 style="font-size: 1.2rem; color: var(--accent); font-weight: 500;">{{ book.author }}</h3>
+                <span style="color: var(--border);">|</span>
+                <span style="color: var(--text-muted); font-size: 0.9rem;">⭐ 4.8 / 5.0</span>
             </div>
             
-            <div style="display: flex; gap: 2rem; color: var(--text-muted); font-size: 0.9rem;">
+            <div style="background: var(--bg-card); padding: 2.5rem; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 2rem;">
+                <h4 style="margin-bottom: 1.5rem; font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1.5px; font-weight: 700;">Анотація</h4>
+                <p style="line-height: 1.8; color: var(--text-main); white-space: pre-line; font-size: 1.05rem;">{{ book.description }}</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-card);">
                 <div>
-                    <strong>Мова:</strong> Українська
+                    <div style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">Мова</div>
+                    <div style="font-weight: 600;">Українська 🇺🇦</div>
                 </div>
                 <div>
-                    <strong>Формат:</strong> PDF / EPUB
+                    <div style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">Формат</div>
+                    <div style="font-weight: 600;">PDF / EPUB</div>
                 </div>
                 <div>
-                    <strong>Переглядів:</strong> {{ book.views_count }}
+                    <div style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">Дата додавання</div>
+                    <div style="font-weight: 600;">{{ book.created_at.strftime('%d.%m.%Y') if book.created_at else 'Невідомо' }}</div>
+                </div>
+                <div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">Переглядів</div>
+                    <div style="font-weight: 600;">{{ book.views_count }}</div>
                 </div>
             </div>
+
         </div>
 
     </div>

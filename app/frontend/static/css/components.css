@@ -14,3 +14,38 @@
     border-radius: 5px;
     display: inline-block;
 }
+
+.shelf-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    background: transparent;
+}
+
+.shelf-btn:hover {
+    background: var(--bg-body);
+    border-color: var(--text-main);
+    color: var(--text-main);
+    transform: translateY(-2px);
+}
+
+.shelf-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 4px 10px rgba(212, 163, 115, 0.4); 
+}
+
+.shelf-btn.active:hover {
+    opacity: 0.9;
+    transform: none;
+}

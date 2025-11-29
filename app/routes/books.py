@@ -4,6 +4,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, current_
 from flask_login import login_required, current_user
 from app.forms.book import AddBookForm
 from app.models.book import create_book, get_book_by_id
+from app.models.library import get_user_book_status
 
 bp = Blueprint('books', __name__, url_prefix='/books')
 
@@ -49,6 +50,11 @@ def add_book():
 def book_detail(book_id):
     book = get_book_by_id(book_id)
     if not book:
-        abort(404) # Якщо книги немає - помилка 404
+        abort(404)
+
+    current_status = None
+    if current_user.is_authenticated:
+        current_status = get_user_book_status(current_user.id, book.id)
         
-    return render_template('books/detail.html', book=book)
+    return render_template('books/detail.html', book=book, current_status=current_status)
+    
