@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from .core.config import Config
 from .core import db, logger
 
@@ -14,7 +14,7 @@ def create_app():
 
     @app.route('/')
     def index():
-        return "Привіт! InkFlow працює!"
+        return render_template('index.html')
 
     @app.route('/test-db')
     def test_db():

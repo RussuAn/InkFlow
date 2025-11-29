@@ -1,0 +1,20 @@
+:root {
+    --bg-body: #F9F7F2;
+    --bg-card: #FFFFFF;
+    --text-main: #2C2C2C;
+    --text-muted: #666666;
+    --accent: #D4A373;
+    --border: #E5E5E5;
+
+    --font-head: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+}
+
+[data-theme="dark"] {
+    --bg-body: #1A1A1A;
+    --bg-card: #242424;
+    --text-main: #EAEAEA;
+    --text-muted: #A0A0A0;
+    --accent: #C58F5E;
+    --border: #333333;
+}
