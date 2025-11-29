@@ -1,8 +1,15 @@
 from flask import Flask, render_template
+from flask_login import LoginManager
 from .core.config import Config
 from .core import db, logger
 
 from app.routes import auth
+from app.models.user import get_user_by_id
+
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+login_manager.login_message = "Будь ласка, увійдіть, щоб отримати доступ."
+login_manager.login_message_category = "info"
 
 def create_app():
     app = Flask(__name__, 
@@ -13,6 +20,8 @@ def create_app():
 
     logger.setup_logger(app)
     db.init_app(app)
+
+    login_manager.init_app(app)
     
     app.register_blueprint(auth.bp)
 
@@ -33,3 +42,7 @@ def create_app():
             return f"Помилка: {e}"
 
     return app
+
+@login_manager.user_loader
+def load_user(user_id):
+    return get_user_by_id(user_id)

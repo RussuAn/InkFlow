@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from app.models.user import get_user_by_email, get_user_by_username
+
 
 class RegistrationForm(FlaskForm):
     username = StringField('Нікнейм', validators=[
@@ -35,3 +36,18 @@ class RegistrationForm(FlaskForm):
         user = get_user_by_email(email.data)
         if user:
             raise ValidationError('Цей email вже зареєстрований.')
+        
+
+class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[
+        DataRequired(message="Введіть email"),
+        Email(message="Некоректний email")
+    ])
+    
+    password = PasswordField('Пароль', validators=[
+        DataRequired(message="Введіть пароль")
+    ])
+    
+    remember = BooleanField('Запам\'ятати мене')
+    
+    submit = SubmitField('Увійти')
