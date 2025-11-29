@@ -5,7 +5,9 @@ from .core import db, logger
 
 from app.routes import auth
 from app.routes import user
+from app.routes import books
 from app.models.user import get_user_by_id
+from app.models.book import get_all_books
 
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
@@ -26,10 +28,12 @@ def create_app():
     
     app.register_blueprint(auth.bp)
     app.register_blueprint(user.bp)
+    app.register_blueprint(books.bp)
 
     @app.route('/')
     def index():
-        return render_template('index.html')
+        books = get_all_books()
+        return render_template('index.html', books=books)
 
     @app.route('/test-db')
     def test_db():
