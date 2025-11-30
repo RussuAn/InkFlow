@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
-from flask_login import login_user, logout_user, current_user, login_required
+from flask_login import login_user, logout_user, current_user
 from app.forms.auth import RegistrationForm, LoginForm
-from app.models.user import create_user, get_user_by_email
+from app.models.user import create_user, get_user_by_email, update_user_streak
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -32,7 +32,11 @@ def login():
 
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember.data)
-            flash('З поверненням!', 'success')
+            new_streak = update_user_streak(user.id)
+            if new_streak and new_streak > 1:
+                flash(f'З поверненням! Ваш стрік: {new_streak} 🔥', 'success')
+            else:
+                flash('З поверненням!', 'success')
 
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('index'))
