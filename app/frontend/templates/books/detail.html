@@ -15,10 +15,10 @@
                      style="width: 100%; height: 100%; object-fit: cover;">
             </div>
             
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 2rem;">
-                <button style="width: 100%; padding: 14px; background: var(--text-main); color: var(--bg-body); border: none; border-radius: 30px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: opacity 0.2s;">
-                    Читати уривок
-                </button>
+            <a href="{{ url_for('reader.read_book', book_id=book.id) }}" 
+                style="display: block; text-align: center; width: 100%; padding: 14px; background: var(--text-main); color: var(--bg-body); border: none; border-radius: 30px; font-weight: 600; font-size: 1rem; cursor: pointer; text-decoration: none; transition: opacity 0.2s;">
+                📖 Читати онлайн
+            </a>
                 
                 {% if book.price_coins == 0 %}
                     <a href="{{ url_for('static', filename='uploads/books/' + book.file_path) }}" download 

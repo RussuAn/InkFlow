@@ -7,6 +7,7 @@ from app.routes import auth
 from app.routes import user
 from app.routes import books
 from app.routes import library
+from app.routes import reader
 
 from app.models.user import get_user_by_id
 from app.models.book import get_all_books
@@ -32,6 +33,7 @@ def create_app():
     app.register_blueprint(user.bp)
     app.register_blueprint(books.bp)
     app.register_blueprint(library.bp)
+    app.register_blueprint(reader.bp)
 
     @app.route('/')
     def index():

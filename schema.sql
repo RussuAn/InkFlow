@@ -29,22 +29,11 @@ CREATE TABLE books (
     description TEXT,
     cover_image VARCHAR(255),
 
-    -- Файлова частина
     file_path VARCHAR(255),
     price_coins INT DEFAULT 0,
 
     views_count INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE chapters (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    book_id INT NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    content LONGTEXT NOT NULL,
-    order_number INT NOT NULL,
-
-    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
 );
 
 CREATE TABLE library_items (
@@ -68,13 +57,13 @@ CREATE TABLE reading_progress (
     user_id INT NOT NULL,
     book_id INT NOT NULL,
     chapter_id INT NOT NULL,
-    scroll_position INT DEFAULT 0,
+    current_page INT DEFAULT 1,
+    total_pages INT DEFAULT 0,
     last_read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     PRIMARY KEY (user_id, book_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
-    FOREIGN KEY (chapter_id) REFERENCES chapters(id) ON DELETE CASCADE
 );
 
 CREATE TABLE purchases (

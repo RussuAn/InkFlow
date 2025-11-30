@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ book.title }} | Читання</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reader.css') }}">
+</head>
+<body>
+    <div class="toolbar">
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="{{ url_for('books.book_detail', book_id=book.id) }}" class="btn-back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Вийти
+            </a>
+            <span style="color: #bbb; font-size: 0.9rem;">{{ book.title }}</span>
+        </div>
+        
+        <div class="toolbar-group">
+            <button class="btn" id="prev" title="Вгору">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+            </button>
+            <span class="page-info">
+                <span id="page_num">--</span> / <span id="page_count">--</span>
+            </span>
+            <button class="btn" id="next" title="Вниз">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+        </div>
+        
+        <div class="toolbar-group">
+            <button class="btn" id="zoom_out" title="Зменшити">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+            <button class="btn" id="zoom_in" title="Збільшити">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+        </div>
+    </div>
+
+    <div id="viewer-container">
+        </div>
+
+    <script>
+        window.readerConfig = {
+            url: "{{ url_for('static', filename='uploads/books/' + book.file_path) }}",
+            startPage: {{ start_page }},
+            bookId: {{ book.id }}
+        };
+    </script>
+    <script src="{{ url_for('static', filename='js/reader.js') }}"></script>
+</body>
+</html>
