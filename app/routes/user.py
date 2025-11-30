@@ -1,10 +1,12 @@
 import os
 import secrets
 from flask import Blueprint, render_template, redirect, request, url_for, flash, current_app
-from flask_login import login_required, current_user
+from flask_login import login_required, current_user, logout_user
 from app.forms.profile import EditProfileForm
-from app.models.user import update_user_profile
+from app.forms.settings import ChangePasswordForm, DeleteAccountForm
+from app.models.user import update_user_profile, update_password, delete_user
 from app.models.library import get_books_by_shelf
+from app.models.commerce import top_up_balance
 
 
 bp = Blueprint('user', __name__, url_prefix='/user')
@@ -69,3 +71,44 @@ def edit_profile():
         form.bio.data = current_user.bio
 
     return render_template('user/edit_profile.html', form=form)
+
+@bp.route('/wallet/topup', methods=['GET', 'POST'])
+@login_required
+def topup():
+    if request.method == 'POST':
+        amount = int(request.form.get('amount'))
+        
+        if top_up_balance(current_user.id, amount):
+            flash(f'Оплата пройшла успішно! Баланс поповнено на {amount} 🪙.', 'success')
+
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('user.profile'))
+            
+        else:
+            flash('Помилка транзакції.', 'error')
+            
+    return render_template('user/payment.html')
+
+@bp.route('/settings', methods=['GET', 'POST'])
+@login_required
+def settings():
+    pass_form = ChangePasswordForm()
+    del_form = DeleteAccountForm()
+
+    if pass_form.validate_on_submit() and 'new_password' in request.form:
+        if current_user.check_password(pass_form.old_password.data):
+            if update_password(current_user.id, pass_form.new_password.data):
+                flash('Пароль успішно змінено!', 'success')
+                return redirect(url_for('user.settings'))
+            else:
+                flash('Помилка бази даних.', 'error')
+        else:
+            flash('Старий пароль введено невірно.', 'error')
+
+    if del_form.validate_on_submit() and 'Видалити' in del_form.submit.label.text:
+        delete_user(current_user.id)
+        logout_user()
+        flash('Ваш акаунт видалено. Нам жаль, що ви йдете.', 'info')
+        return redirect(url_for('index'))
+
+    return render_template('user/settings.html', pass_form=pass_form, del_form=del_form)

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Налаштування | InkFlow{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; padding-bottom: 3rem;">
+    
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+        <h2 style="margin: 0;">Налаштування акаунту</h2>
+        <a href="{{ url_for('user.profile') }}" style="color: var(--text-muted);">&larr; Назад</a>
+    </div>
+    
+    <div style="background: var(--bg-card); padding: 2.5rem; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 2rem;">
+        <h3 style="margin-bottom: 1.5rem; color: var(--accent);">Безпека</h3>
+        <form method="POST">
+            {{ pass_form.hidden_tag() }}
+            
+            <div style="margin-bottom: 1rem;">
+                {{ pass_form.old_password.label(style="display: block; margin-bottom: 0.5rem; font-weight: 600;") }}
+                {{ pass_form.old_password(style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main);") }}
+            </div>
+            
+            <div style="margin-bottom: 1rem;">
+                {{ pass_form.new_password.label(style="display: block; margin-bottom: 0.5rem; font-weight: 600;") }}
+                {{ pass_form.new_password(style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main);") }}
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                {{ pass_form.confirm_password.label(style="display: block; margin-bottom: 0.5rem; font-weight: 600;") }}
+                {{ pass_form.confirm_password(style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main);") }}
+            </div>
+            
+            {{ pass_form.submit(style="background: var(--text-main); color: var(--bg-body); padding: 10px 25px; border: none; border-radius: 30px; cursor: pointer; font-weight: 600;") }}
+        </form>
+    </div>
+
+    <div style="background: rgba(231, 76, 60, 0.1); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(231, 76, 60, 0.3);">
+        <h3 style="margin-bottom: 1rem; color: #e74c3c;">Небезпечна зона</h3>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Після видалення акаунту всі ваші дані, книги та історія будуть втрачені безповоротно.</p>
+        
+        <form method="POST" onsubmit="return confirm('Ви впевнені? Це незворотньо!');">
+            {{ del_form.hidden_tag() }}
+            {{ del_form.submit(style="background: #e74c3c; color: white; padding: 10px 25px; border: none; border-radius: 30px; cursor: pointer; font-weight: 600;") }}
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -138,3 +138,30 @@ def update_user_profile(user_id, username, display_name, bio, avatar_url=None):
         return False
     finally:
         cursor.close()
+
+def update_password(user_id, new_password):
+    db = get_db()
+    cursor = db.cursor()
+    hashed = generate_password_hash(new_password)
+    try:
+        cursor.execute("UPDATE users SET password_hash = %s WHERE id = %s", (hashed, user_id))
+        db.commit()
+        return True
+    except Exception as e:
+        print(e)
+        return False
+    finally:
+        cursor.close()
+
+def delete_user(user_id):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        db.commit()
+        return True
+    except Exception as e:
+        print(e)
+        return False
+    finally:
+        cursor.close()

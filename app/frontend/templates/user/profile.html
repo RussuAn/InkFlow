@@ -8,48 +8,52 @@
     <div class="profile-card" style="background: var(--bg-card); padding: 2.5rem; border-radius: 16px; box-shadow: var(--shadow); text-align: center; flex: 1; min-width: 280px; position: sticky; top: 100px;">
         <div class="avatar-wrapper" style="position: relative; width: 160px; height: 160px; margin: 0 auto 1.5rem;">
             <img src="{{ avatar_file }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 4px solid var(--bg-body); box-shadow: 0 8px 20px rgba(0,0,0,0.1);">
-            <div style="position: absolute; bottom: 10px; right: 10px; background: #2ecc71; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--bg-card);" title="Online"></div>
+            <div style="position: absolute; bottom: 10px; right: 10px; background: #2ecc71; width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--bg-card);"></div>
         </div>
         <h2 style="margin-bottom: 0.2rem; font-size: 1.8rem; line-height: 1.2;">{{ current_user.display_name }}</h2>
         <p style="color: var(--accent); font-weight: 600; margin-bottom: 0.5rem; font-size: 1.1rem;">@{{ current_user.username }}</p>
         <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;">{{ current_user.email }}</p>
-        <a href="{{ url_for('user.edit_profile') }}" style="display: block; width: 100%; padding: 12px 0; border: 1px solid var(--border); border-radius: 30px; color: var(--text-main); font-weight: 600; text-decoration: none; transition: all 0.2s; background: var(--bg-body);">⚙️ Редагувати профіль</a>
+        
+        <div style="display: flex; gap: 10px;">
+            <a href="{{ url_for('user.edit_profile') }}" style="flex: 1; display: block; padding: 12px 0; border: 1px solid var(--border); border-radius: 30px; color: var(--text-main); font-weight: 600; text-decoration: none; transition: all 0.2s; background: var(--bg-body);">
+                ✏️ Редагувати
+            </a>
+            <a href="{{ url_for('user.settings') }}" style="width: 50px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); border-radius: 30px; color: var(--text-main); text-decoration: none; background: var(--bg-body);" title="Налаштування безпеки">
+                ⚙️
+            </a>
+        </div>
     </div>
 
     <div class="profile-content" style="flex: 2; min-width: 300px;">
-        
         <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-            <div class="stat-card" style="background: var(--bg-card); padding: 1.5rem; border-radius: 16px; box-shadow: var(--shadow); text-align: center; border: 1px solid var(--border);">
+            <div class="stat-card" style="background: var(--bg-card); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border); text-align: center;">
                 <div style="font-size: 2rem; margin-bottom: 0.5rem;">🪙</div>
                 <h3 style="color: var(--text-main); font-size: 1.8rem; margin-bottom: 0.2rem;">{{ current_user.balance or 0 }}</h3>
-                <p style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Монет</p>
+                <p style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Монет</p>
             </div>
-            
-            <div class="stat-card" style="background: var(--bg-card); padding: 1.5rem; border-radius: 16px; box-shadow: var(--shadow); text-align: center; border: 1px solid var(--border);">
+            <div class="stat-card" style="background: var(--bg-card); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border); text-align: center;">
                 <div style="font-size: 2rem; margin-bottom: 0.5rem;">📖</div>
                 <h3 style="color: var(--text-main); font-size: 1.8rem; margin-bottom: 0.2rem;">{{ books_reading|length }}</h3>
-                <p style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Читаю</p>
+                <p style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Читаю</p>
             </div>
-            
-            <div class="stat-card" style="background: var(--bg-card); padding: 1.5rem; border-radius: 16px; box-shadow: var(--shadow); text-align: center; border: 1px solid var(--border);">
+            <div class="stat-card" style="background: var(--bg-card); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border); text-align: center;">
                 <div style="font-size: 2rem; margin-bottom: 0.5rem;">✅</div>
                 <h3 style="color: var(--text-main); font-size: 1.8rem; margin-bottom: 0.2rem;">{{ books_completed|length }}</h3>
-                <p style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Прочитано</p>
+                <p style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Прочитано</p>
             </div>
-            
-            <div class="stat-card" style="background: var(--bg-card); padding: 1.5rem; border-radius: 16px; box-shadow: var(--shadow); text-align: center; border: 1px solid var(--border);">
+            <div class="stat-card" style="background: var(--bg-card); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border); text-align: center;">
                 <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔥</div>
                 <h3 style="color: var(--accent); font-size: 1.8rem; margin-bottom: 0.2rem;">{{ current_user.streak_count }}</h3>
-                <p style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Днів стрік</p>
+                <p style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Днів стрік</p>
             </div>
         </div>
 
-        <div class="bio-section" style="background: var(--bg-card); padding: 2.5rem; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 2rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
-                <h3 style="margin: 0; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);">Про мене</h3>
+        <div class="bio-section" style="background: var(--bg-card); padding: 2.5rem; border-radius: 16px; margin-bottom: 2rem;">
+            <div style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+                <h3 style="margin: 0; font-size: 1.2rem; text-transform: uppercase; color: var(--text-muted);">Про мене</h3>
             </div>
             {% if current_user.bio %}
-                <p style="white-space: pre-line; color: var(--text-main); line-height: 1.8; font-size: 1.05rem;">{{ current_user.bio }}</p>
+                <p style="white-space: pre-line; line-height: 1.8;">{{ current_user.bio }}</p>
             {% else %}
                 <div style="text-align: center; padding: 2rem 0; color: var(--text-muted); border: 2px dashed var(--border); border-radius: 8px;">
                     <p style="margin-bottom: 1rem;">Тут поки що тихо...</p>
@@ -60,7 +64,7 @@
 
         {% if books_reading %}
         <div style="margin-bottom: 2rem;">
-            <h3 style="margin-bottom: 1rem; font-size: 1.2rem; color: var(--text-main);">📖 Читаю зараз</h3>
+            <h3 style="margin-bottom: 1rem; font-size: 1.2rem;">📖 Читаю зараз</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem;">
                 {% for book in books_reading %}
                     <a href="{{ url_for('books.book_detail', book_id=book.id) }}" style="text-decoration: none; color: inherit;">
@@ -70,8 +74,6 @@
                             </div>
                             <div style="padding: 10px;">
                                 <h4 style="font-size: 0.9rem; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ book.title }}</h4>
-                                <div style="font-size: 0.75rem; color: var(--text-muted); width: 100%; height: 4px; background: var(--border); border-radius: 2px; margin-top: 5px; overflow: hidden;">
-                                    <div style="width: 45%; height: 100%; background: var(--accent);"></div> </div>
                             </div>
                         </div>
                     </a>
@@ -82,11 +84,11 @@
 
         {% if books_completed %}
         <div>
-            <h3 style="margin-bottom: 1rem; font-size: 1.2rem; color: var(--text-main);">✅ Прочитано</h3>
+            <h3 style="margin-bottom: 1rem; font-size: 1.2rem;">✅ Прочитано</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1rem;">
                 {% for book in books_completed %}
                     <a href="{{ url_for('books.book_detail', book_id=book.id) }}" style="text-decoration: none; color: inherit;">
-                        <div style="background: var(--bg-card); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow); opacity: 0.8; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
+                        <div style="background: var(--bg-card); border-radius: 8px; overflow: hidden; opacity: 0.8;">
                             <div style="aspect-ratio: 2/3;">
                                 <img src="{{ url_for('static', filename='uploads/covers/' + book.cover_image) }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(30%);">
                             </div>
@@ -96,7 +98,6 @@
             </div>
         </div>
         {% endif %}
-
     </div>
 </div>
 {% endblock %}

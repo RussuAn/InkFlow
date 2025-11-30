@@ -1,12 +1,24 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
-from wtforms import StringField, TextAreaField, IntegerField, SubmitField
+from wtforms import StringField, TextAreaField, IntegerField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Length, NumberRange
 
 class AddBookForm(FlaskForm):
     title = StringField('Назва книги', validators=[DataRequired(), Length(max=255)])
     
     author = StringField('Автор', validators=[DataRequired(), Length(max=100)])
+
+    genre = SelectField('Жанр', choices=[
+        ('Художня література', 'Художня література'),
+        ('Фантастика', 'Фантастика'),
+        ('Фентезі', 'Фентезі'),
+        ('Детектив', 'Детектив'),
+        ('Наукова література', 'Наукова література'),
+        ('Психологія', 'Психологія'),
+        ('Бізнес', 'Бізнес'),
+        ('Історія', 'Історія'),
+        ('Інше', 'Інше')
+    ], validators=[DataRequired()])
     
     description = TextAreaField('Опис / Анотація', validators=[DataRequired()])
     

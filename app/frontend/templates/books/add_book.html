@@ -3,7 +3,7 @@
 {% block title %}Додати нову книгу | InkFlow{% endblock %}
 
 {% block content %}
-<div style="max-width: 800px; margin: 0 auto; padding-bottom: 3rem;">
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 3rem;">
     
     <div style="margin-bottom: 2rem;">
         <h2 style="margin: 0;">Додати книгу</h2>
@@ -15,19 +15,27 @@
         <form method="POST" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
                 
                 <div>
+                    <h3 style="font-size: 1.1rem; color: var(--accent); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Метадані</h3>
+
                     <div style="margin-bottom: 1.5rem;">
                         {{ form.title.label(style="display: block; margin-bottom: 0.5rem; font-weight: 600;") }}
                         {{ form.title(style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-body); color: var(--text-main); font-size: 1rem;") }}
-                        {% for error in form.title.errors %} <div style="color: #e74c3c;">{{ error }}</div> {% endfor %}
+                        {% for error in form.title.errors %} <div style="color: #e74c3c; font-size: 0.85rem; margin-top: 5px;">{{ error }}</div> {% endfor %}
                     </div>
 
                     <div style="margin-bottom: 1.5rem;">
                         {{ form.author.label(style="display: block; margin-bottom: 0.5rem; font-weight: 600;") }}
                         {{ form.author(style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-body); color: var(--text-main); font-size: 1rem;") }}
-                        {% for error in form.author.errors %} <div style="color: #e74c3c;">{{ error }}</div> {% endfor %}
+                        {% for error in form.author.errors %} <div style="color: #e74c3c; font-size: 0.85rem; margin-top: 5px;">{{ error }}</div> {% endfor %}
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        {{ form.genre.label(style="display: block; margin-bottom: 0.5rem; font-weight: 600;") }}
+                        {{ form.genre(style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-body); color: var(--text-main); font-size: 1rem; cursor: pointer;") }}
+                        {% for error in form.genre.errors %} <div style="color: #e74c3c; font-size: 0.85rem; margin-top: 5px;">{{ error }}</div> {% endfor %}
                     </div>
                     
                     <div style="margin-bottom: 1.5rem;">
@@ -36,38 +44,43 @@
                             <span style="position: absolute; left: 10px; top: 11px;">🪙</span>
                             {{ form.price_coins(style="width: 100%; padding: 10px 10px 10px 35px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-body); color: var(--text-main); font-size: 1rem;") }}
                         </div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">0 = Безкоштовно</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Введіть 0, щоб зробити книгу безкоштовною.</div>
+                        {% for error in form.price_coins.errors %} <div style="color: #e74c3c; font-size: 0.85rem; margin-top: 5px;">{{ error }}</div> {% endfor %}
                     </div>
                 </div>
 
                 <div>
+                    <h3 style="font-size: 1.1rem; color: var(--accent); margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Файли</h3>
+
                     <div style="margin-bottom: 1.5rem;">
                         {{ form.cover.label(style="display: block; margin-bottom: 0.5rem; font-weight: 600;") }}
-                        <div style="padding: 15px; border: 1px dashed var(--border); border-radius: 8px; background: var(--bg-body);">
-                            {{ form.cover(style="width: 100%;") }}
+                        <div style="padding: 20px; border: 2px dashed var(--border); border-radius: 8px; background: var(--bg-body); text-align: center; transition: border-color 0.2s;">
+                            {{ form.cover(style="width: 100%; cursor: pointer;") }}
+                            <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 10px;">JPG або PNG, бажано вертикальна</div>
                         </div>
-                        {% for error in form.cover.errors %} <div style="color: #e74c3c;">{{ error }}</div> {% endfor %}
+                        {% for error in form.cover.errors %} <div style="color: #e74c3c; font-size: 0.85rem; margin-top: 5px;">{{ error }}</div> {% endfor %}
                     </div>
 
                     <div style="margin-bottom: 1.5rem;">
                         {{ form.book_file.label(style="display: block; margin-bottom: 0.5rem; font-weight: 600;") }}
-                        <div style="padding: 15px; border: 1px dashed var(--border); border-radius: 8px; background: var(--bg-body);">
-                            {{ form.book_file(style="width: 100%;") }}
+                        <div style="padding: 20px; border: 2px dashed var(--border); border-radius: 8px; background: var(--bg-body); text-align: center;">
+                            {{ form.book_file(style="width: 100%; cursor: pointer;") }}
+                            <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 10px;">PDF або EPUB</div>
                         </div>
-                        {% for error in form.book_file.errors %} <div style="color: #e74c3c;">{{ error }}</div> {% endfor %}
+                        {% for error in form.book_file.errors %} <div style="color: #e74c3c; font-size: 0.85rem; margin-top: 5px;">{{ error }}</div> {% endfor %}
                     </div>
                 </div>
             </div>
 
-            <div style="margin-bottom: 2rem;">
+            <div style="margin-bottom: 2rem; margin-top: 1rem;">
                 {{ form.description.label(style="display: block; margin-bottom: 0.5rem; font-weight: 600;") }}
-                {{ form.description(style="width: 100%; min-height: 120px; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-body); color: var(--text-main); font-family: inherit;", placeholder="Про що ця книга?") }}
-                {% for error in form.description.errors %} <div style="color: #e74c3c;">{{ error }}</div> {% endfor %}
+                {{ form.description(style="width: 100%; min-height: 150px; padding: 15px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-body); color: var(--text-main); font-family: inherit; line-height: 1.5; resize: vertical;", placeholder="Напишіть анотацію, яка зацікавить читача...") }}
+                {% for error in form.description.errors %} <div style="color: #e74c3c; font-size: 0.85rem; margin-top: 5px;">{{ error }}</div> {% endfor %}
             </div>
 
-            <div style="border-top: 1px solid var(--border); padding-top: 1.5rem;">
-                {{ form.submit(style="background: var(--text-main); color: var(--bg-body); padding: 12px 35px; border: none; border-radius: 30px; cursor: pointer; font-weight: 600; font-size: 1rem;") }}
-                <a href="{{ url_for('index') }}" style="margin-left: 15px; color: var(--text-muted); text-decoration: none;">Скасувати</a>
+            <div style="border-top: 1px solid var(--border); padding-top: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+                {{ form.submit(style="background: var(--text-main); color: var(--bg-body); padding: 12px 35px; border: none; border-radius: 30px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: opacity 0.2s;") }}
+                <a href="{{ url_for('index') }}" style="color: var(--text-muted); text-decoration: none;">Скасувати</a>
             </div>
             
         </form>

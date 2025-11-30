@@ -20,19 +20,33 @@
             </div>
             
             <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 2rem;">
-                <a href="{{ url_for('reader.read_book', book_id=book.id) }}" 
-                   style="display: block; text-align: center; width: 100%; padding: 14px; background: var(--text-main); color: var(--bg-body); border: none; border-radius: 30px; font-weight: 600; font-size: 1rem; cursor: pointer; text-decoration: none; transition: opacity 0.2s;">
-                   📖 Читати онлайн
-                </a>
                 
-                {% if book.price_coins == 0 %}
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('reader.read_book', book_id=book.id) }}" 
+                       style="display: block; text-align: center; width: 100%; padding: 14px; background: var(--text-main); color: var(--bg-body); border: none; border-radius: 30px; font-weight: 600; font-size: 1rem; cursor: pointer; text-decoration: none; transition: opacity 0.2s;">
+                       📖 Читати онлайн
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('auth.login', next=request.path) }}" 
+                       style="display: block; text-align: center; width: 100%; padding: 14px; background: var(--text-main); color: var(--bg-body); border: none; border-radius: 30px; font-weight: 600; font-size: 1rem; cursor: pointer; text-decoration: none;">
+                       Увійдіть, щоб читати
+                    </a>
+                {% endif %}
+                
+                {% if is_purchased or book.price_coins == 0 %}
                     <a href="{{ url_for('static', filename='uploads/books/' + book.file_path) }}" download 
                        style="display: block; text-align: center; width: 100%; padding: 14px; background: transparent; border: 2px solid var(--text-main); color: var(--text-main); border-radius: 30px; font-weight: 600; text-decoration: none; transition: background 0.2s;">
                         ⬇️ Завантажити файл
                     </a>
                 {% else %}
-                    <button style="width: 100%; padding: 14px; background: var(--accent); color: white; border: none; border-radius: 30px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                    <a href="{{ url_for('books.buy_book_route', book_id=book.id) }}" 
+                       style="display: block; text-align: center; text-decoration: none; width: 100%; padding: 14px; background: var(--accent); color: white; border: none; border-radius: 30px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                         Купити за {{ book.price_coins }} 🪙
+                    </a>
+
+                    <button onclick="openGiftModal()" 
+                            style="width: 100%; padding: 12px; background: transparent; border: 2px solid var(--accent); color: var(--accent); border-radius: 30px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
+                        🎁 Подарувати другу
                     </button>
                 {% endif %}
             </div>
@@ -40,7 +54,6 @@
             {% if current_user.is_authenticated %}
             <div style="padding-top: 1.5rem; border-top: 1px solid var(--border);">
                 <p style="margin-bottom: 1rem; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Додати на полицю</p>
-                
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <a href="{{ url_for('library.update_status', book_id=book.id, status='planned') }}" class="shelf-btn {% if current_status == 'planned' %}active{% endif %}">📅 В планах</a>
                     <a href="{{ url_for('library.update_status', book_id=book.id, status='reading') }}" class="shelf-btn {% if current_status == 'reading' %}active{% endif %}">📖 Читаю</a>
@@ -48,19 +61,26 @@
                     <a href="{{ url_for('library.update_status', book_id=book.id, status='dropped') }}" class="shelf-btn {% if current_status == 'dropped' %}active{% endif %}">❌ Кинув</a>
                 </div>
             </div>
-            {% else %}
-                <div style="text-align: center; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem;">
-                    <a href="{{ url_for('auth.login', next=request.path) }}" style="color: var(--accent); font-weight: bold;">Увійдіть</a>, щоб додати книгу на свою полицю.
-                </div>
             {% endif %}
         </div>
 
         <div style="flex: 2; min-width: 300px;">
             <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; line-height: 1.2;">{{ book.title }}</h1>
             
-            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
-                <h3 style="font-size: 1.2rem; color: var(--accent); font-weight: 500;">{{ book.author }}</h3>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                <a href="{{ url_for('books.search', q=book.author) }}" style="text-decoration: none;">
+                    <h3 style="font-size: 1.2rem; color: var(--accent); font-weight: 500; margin: 0;">{{ book.author }}</h3>
+                </a>
                 <span style="color: var(--border);">|</span>
+                {% if book.genre %}
+                    <a href="{{ url_for('books.search', q=book.genre) }}" 
+                       style="background: var(--bg-body); border: 1px solid var(--border); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; color: var(--text-muted); text-decoration: none; transition: all 0.2s;"
+                       onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)'"
+                       onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-muted)'">
+                        {{ book.genre }}
+                    </a>
+                    <span style="color: var(--border);">|</span>
+                {% endif %}
                 <span style="color: var(--text-muted); font-size: 0.9rem;">⭐ {{ reviews|length }} відгуків</span>
             </div>
             
@@ -124,23 +144,19 @@
             <div style="display: flex; gap: 1.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border);">
                 <div style="flex-shrink: 0;">
                     {% if review.avatar_url %}
-                        <img src="{{ url_for('static', filename='uploads/avatars/' + review.avatar_url) }}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg-body); box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                        <img src="{{ url_for('static', filename='uploads/avatars/' + review.avatar_url) }}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
                     {% else %}
-                        <img src="https://ui-avatars.com/api/?name={{ review.username }}&background=random" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--bg-body);">
+                        <img src="https://ui-avatars.com/api/?name={{ review.username }}&background=random" style="width: 50px; height: 50px; border-radius: 50%;">
                     {% endif %}
                 </div>
-                
                 <div style="flex: 1;">
                     <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; flex-wrap: wrap;">
                         <div>
                             <span style="font-weight: 700; font-size: 1.1rem; margin-right: 10px;">{{ review.display_name or review.username }}</span>
                             <span style="font-size: 0.85rem; color: var(--text-muted);">@{{ review.username }}</span>
                         </div>
-                        <span style="color: #f1c40f; font-size: 0.9rem;">
-                            {% for _ in range(review.rating) %}⭐{% endfor %}
-                        </span>
+                        <span style="color: #f1c40f; font-size: 0.9rem;">{% for _ in range(review.rating) %}⭐{% endfor %}</span>
                     </div>
-                    
                     <p style="color: var(--text-main); line-height: 1.6; margin-bottom: 0.5rem;">{{ review.comment }}</p>
                     <p style="color: var(--text-muted); font-size: 0.8rem;">{{ review.created_at.strftime('%d.%m.%Y') }}</p>
                 </div>
@@ -149,10 +165,40 @@
                 <div style="text-align: center; color: var(--text-muted); padding: 2rem;">
                     <p style="font-size: 3rem; margin-bottom: 1rem;">💭</p>
                     <p>Поки що немає відгуків.</p>
-                    <p>Прочитайте книгу та розкажіть нам свої враження!</p>
                 </div>
             {% endfor %}
         </div>
     </div>
 </div>
+
+<div id="gift-modal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="close-modal" onclick="closeGiftModal()">&times;</button>
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+            <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎁</div>
+            <h3 style="margin: 0;">Зробити подарунок</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Подаруйте книгу "{{ book.title }}"</p>
+        </div>
+        <form action="{{ url_for('books.gift_book_route', book_id=book.id) }}" method="POST">
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Нікнейм друга</label>
+                <div style="position: relative;">
+                    <span style="position: absolute; left: 12px; top: 11px; color: var(--text-muted);">@</span>
+                    <input type="text" name="recipient_username" placeholder="username" required style="width: 100%; padding: 10px 10px 10px 30px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main); font-size: 1rem;">
+                </div>
+            </div>
+            <div style="background: var(--bg-body); padding: 10px; border-radius: 8px; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; text-align: center;">
+                З вашого балансу буде списано <strong>{{ book.price_coins }} 🪙</strong>
+            </div>
+            <button type="submit" style="width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 30px; font-weight: 600; cursor: pointer;">Надіслати подарунок</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById('gift-modal');
+    function openGiftModal() { modal.classList.add('active'); }
+    function closeGiftModal() { modal.classList.remove('active'); }
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeGiftModal(); });
+</script>
 {% endblock %}
