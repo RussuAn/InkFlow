@@ -5,6 +5,8 @@ from flask_login import login_required, current_user
 from app.forms.book import AddBookForm
 from app.models.book import create_book, get_book_by_id
 from app.models.library import get_user_book_status
+from app.forms.review import ReviewForm
+from app.models.review import add_review, get_book_reviews
 
 bp = Blueprint('books', __name__, url_prefix='/books')
 
@@ -46,7 +48,7 @@ def add_book():
             
     return render_template('books/add_book.html', form=form)
 
-@bp.route('/<int:book_id>')
+@bp.route('/<int:book_id>', methods=['GET', 'POST'])
 def book_detail(book_id):
     book = get_book_by_id(book_id)
     if not book:
@@ -55,6 +57,16 @@ def book_detail(book_id):
     current_status = None
     if current_user.is_authenticated:
         current_status = get_user_book_status(current_user.id, book.id)
+
+    reviews = get_book_reviews(book.id)
+    form = ReviewForm()
+    
+    if form.validate_on_submit() and current_user.is_authenticated:
+        if add_review(current_user.id, book.id, int(form.rating.data), form.comment.data):
+            flash('Дякуємо за ваш відгук!', 'success')
+            return redirect(url_for('books.book_detail', book_id=book.id))
+        else:
+            flash('Помилка при додаванні відгуку.', 'error')
         
-    return render_template('books/detail.html', book=book, current_status=current_status)
+    return render_template('books/detail.html', book=book, current_status=current_status, reviews=reviews, form=form)
     
