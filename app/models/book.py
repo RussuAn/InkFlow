@@ -2,7 +2,7 @@ from app.core.db import get_db
 import mysql.connector
 
 class Book:
-    def __init__(self, id, title, author, description, cover_image, file_path, price_coins=0, views_count=0, created_at=None, genre=None):
+    def __init__(self, id, title, author, description, cover_image, file_path, price_coins=0, page_count=0, views_count=0, created_at=None, genre=None):
         self.id = id
         self.title = title
         self.author = author
@@ -10,19 +10,20 @@ class Book:
         self.cover_image = cover_image
         self.file_path = file_path
         self.price_coins = price_coins
+        self.page_count = page_count
         self.views_count = views_count
         self.created_at = created_at
         self.genre = genre
 
-def create_book(title, author, description, cover_image, file_path, price_coins, genre):
+def create_book(title, author, description, cover_image, file_path, price_coins, page_count, genre):
     db = get_db()
     cursor = db.cursor()
     try:
         query = """
-            INSERT INTO books (title, author, description, cover_image, file_path, price_coins, genre)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO books (title, author, description, cover_image, file_path, price_coins, page_count, genre)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
-        cursor.execute(query, (title, author, description, cover_image, file_path, price_coins, genre))
+        cursor.execute(query, (title, author, description, cover_image, file_path, price_coins, page_count, genre))
         db.commit()
         return True
     except mysql.connector.Error as err:
@@ -73,3 +74,17 @@ def search_books(query_text):
     for data in books_data:
         books.append(Book(**data))
     return books
+
+def delete_book(book_id):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        query = "DELETE FROM books WHERE id = %s"
+        cursor.execute(query, (book_id,))
+        db.commit()
+        return True
+    except mysql.connector.Error as err:
+        print(f"Error deleting book: {err}")
+        return False
+    finally:
+        cursor.close()

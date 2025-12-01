@@ -4,88 +4,206 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}InkFlow{% endblock %}</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body>
 
+    {% block navbar %}
     <nav class="navbar">
         <div class="container nav-content">
             
-            <a href="/" class="logo">InkFlow.</a>
-            
+            <a href="{{ url_for('index') }}" class="logo">
+                InkFlow
+            </a>
+
             <div class="search-wrapper">
-                <form action="{{ url_for('books.search') }}" method="get">
-                    <div style="position: relative;">
-                        <input type="text" name="q" id="search-input" autocomplete="off" 
-                               placeholder="Знайти книгу, автора або жанр..." 
-                               style="width: 100%; padding: 10px 15px 10px 40px; border-radius: 30px; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main); font-family: inherit; font-size: 0.95rem; outline: none; transition: box-shadow 0.2s;">
-                        <span style="position: absolute; left: 15px; top: 10px; color: var(--text-muted);">🔍</span>
-                    </div>
-                </form>
-                <div id="search-results" class="search-dropdown"></div>
+                <div class="search-input-wrapper">
+                    <svg class="search-input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="search-input" placeholder="Пошук книг, авторів, жанрів..." autocomplete="off" aria-label="Пошук">
+                    <div id="search-results" class="search-dropdown" style="position: absolute; width: 100%; top: 100%; z-index: 1000;"></div>
+                </div>
             </div>
-            
-            <div class="nav-links" style="display: flex; align-items: center; gap: 15px;">
+
+            <div style="display: flex; align-items: center; gap: 12px;">
+                
+                <button id="theme-toggle" class="nav-btn-styled icon-only" title="Перемкнути тему">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" id="moon-icon"></path>
+                        <circle cx="12" cy="12" r="4" id="sun-icon" style="display: none;"></circle>
+                        <path d="M12 2v2M12 20v2M3 12h2M19 12h2M5.64 5.64l1.43 1.43M16.92 16.92l1.43 1.43M5.64 18.36l1.43-1.43M16.92 7.08l1.43-1.43" id="sun-rays" style="display: none;"></path>
+                    </svg>
+                </button>
                 
                 {% if current_user.is_authenticated %}
-                    
-                    <a href="{{ url_for('user.profile') }}" style="font-weight: 500; display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text-main);" title="Мій профіль">
-                        {% if current_user.avatar_url %}
-                            <img src="{{ url_for('static', filename='uploads/avatars/' + current_user.avatar_url) }}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border);">
-                        {% else %}
-                            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: bold;">
+                    <div class="user-dropdown-wrapper" style="position: relative;">
+                        <button id="user-menu-btn" class="nav-btn-styled icon-only" style="padding: 0; overflow: hidden;">
+                            {% if current_user.avatar_url %}
+                            <img src="{{ url_for('static', filename='uploads/avatars/' + current_user.avatar_url) }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            <div style="width: 100%; height: 100%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: bold;">
                                 {{ current_user.username[0].upper() }}
                             </div>
-                        {% endif %}
-                        <span style="display: none; @media (min-width: 768px) { display: inline; }">{{ current_user.username }}</span>
-                    </a>
-                    
-                    <a href="{{ url_for('user.settings') }}" style="font-size: 1.2rem; color: var(--text-muted); text-decoration: none; padding: 5px; transition: color 0.2s;" title="Налаштування акаунту">
-                        ⚙️
-                    </a>
-                    
-                    <a href="{{ url_for('auth.logout') }}" style="font-size: 0.9rem; color: var(--text-muted); text-decoration: none; margin-left: 5px;">Вийти</a>
+                            {% endif %}
+                        </button>
 
+                        <div id="user-dropdown" class="user-dropdown-content">
+                            <div style="padding: 8px 12px; border-bottom: 1px solid var(--border); margin-bottom: 8px;">
+                                <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);">{{ current_user.display_name }}</div>
+                                <div style="font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ current_user.email }}</div>
+                            </div>
+                            
+                            <a href="{{ url_for('user.profile') }}" class="user-dropdown-item">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                <span>Профіль</span>
+                            </a>
+                            
+                            <a href="{{ url_for('user.settings') }}" class="user-dropdown-item">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.51a2 2 0 0 1 1-1.72l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                                <span>Налаштування</span>
+                            </a>
+
+                            {% if current_user.role == 'admin' %}
+                            <a href="{{ url_for('books.add_book') }}" class="user-dropdown-item">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                                <span>Додати книгу</span>
+                            </a>
+                            {% endif %}
+
+                            <div style="height: 8px;"></div>
+
+                            <a href="{{ url_for('auth.logout') }}" class="user-dropdown-item destructive">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                <span>Вийти</span>
+                            </a>
+                        </div>
+                    </div>
                 {% else %}
-                    <a href="{{ url_for('auth.login') }}" style="font-weight: 600; text-decoration: none; color: var(--text-main);">Увійти</a>
-                    <a href="{{ url_for('auth.register') }}" style="padding: 8px 20px; background: var(--accent); color: white; border-radius: 20px; font-size: 0.9rem; text-decoration: none; font-weight: 500;">Реєстрація</a>
+                    <a href="{{ url_for('auth.login') }}" class="nav-btn-styled text-btn">Увійти</a>
                 {% endif %}
-
-                <button id="theme-toggle" class="theme-toggle" title="Змінити тему">🌙</button>
             </div>
         </div>
     </nav>
-
-    <main class="container" style="padding-top: 2rem; min-height: 80vh;">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-messages" style="margin-bottom: 2rem; max-width: 800px; margin-left: auto; margin-right: auto;">
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}" 
-                             style="padding: 15px; border-radius: 12px; margin-bottom: 10px; 
-                             background: {% if category == 'success' %}#d4edda{% else %}#f8d7da{% endif %}; 
-                             color: {% if category == 'success' %}#155724{% else %}#721c24{% endif %}; 
-                             border: 1px solid {% if category == 'success' %}#c3e6cb{% else %}#f5c6cb{% endif %}; 
-                             box-shadow: var(--shadow); display: flex; align-items: center; gap: 10px;">
-                            <span>{% if category == 'success' %}✅{% else %}⚠️{% endif %}</span>
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
-
-        {% block content %}{% endblock %}
-    </main>
+    {% endblock %}
     
-    <footer style="text-align: center; padding: 3rem 0; color: var(--text-muted); font-size: 0.9rem; margin-top: auto; border-top: 1px solid var(--border);">
-        <p>&copy; 2025 InkFlow Library Project. Created for Coursework.</p>
-    </footer>
+    <main style="padding-top: 100px;">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        window.showToast('{{ message | escape }}', '{{ category }}');
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            const body = document.body;
+            const moonIcon = document.getElementById('moon-icon');
+            const sunIcon = document.getElementById('sun-icon');
+            const sunRays = document.getElementById('sun-rays');
+
+            function updateThemeIcon() {
+                const isDark = body.hasAttribute('data-theme');
+                if (!moonIcon || !sunIcon) return; 
+
+                if (isDark) {
+                    moonIcon.style.display = 'none';
+                    sunIcon.style.display = 'block';
+                    sunRays.style.display = 'block';
+                } else {
+                    moonIcon.style.display = 'block';
+                    sunIcon.style.display = 'none';
+                    sunRays.style.display = 'none';
+                }
+            }
+            
+            const observer = new MutationObserver(updateThemeIcon);
+            observer.observe(body, { attributes: true, attributeFilter: ['data-theme'] });
+            updateThemeIcon();
+        });
+    </script>
+    
     <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
     <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+
+    <style>
+        .user-dropdown-content {
+            background-color: var(--bg-card);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            display: block !important;
+            pointer-events: none;
+            position: absolute;
+            right: 0;
+            min-width: 220px;
+            padding: 0.75rem;
+            border-radius: 16px;
+            top: calc(100% + 10px);
+        }
+
+        .user-dropdown-content.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        
+        .user-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--text-main);
+            text-decoration: none;
+            transition: background-color 0.2s;
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        
+        .user-dropdown-item:hover { background-color: var(--bg-body); }
+        .user-dropdown-item.destructive { color: #EF4444; }
+        .user-dropdown-item.destructive:hover { background-color: rgba(239, 68, 68, 0.1); }
+        
+        /* --- ОНОВЛЕНО: Стилі для кнопок навігації (як у кнопки "Увійти") --- */
+        .nav-btn-styled {
+            display: flex; align-items: center; justify-content: center;
+            background-color: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 14px; color: var(--text-main);
+            cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow);
+        }
+        .nav-btn-styled:hover { 
+            border-color: var(--accent); 
+            transform: translateY(-2px); 
+            box-shadow: var(--shadow-elevated); 
+        }
+
+        /* Модифікатор для квадратних іконок */
+        .nav-btn-styled.icon-only {
+            width: 44px; height: 44px; padding: 0;
+        }
+
+        /* Модифікатор для текстової кнопки */
+        .nav-btn-styled.text-btn {
+            padding: 10px 24px; font-weight: 600; font-size: 0.95rem; text-decoration: none;
+        }
+    </style>
 </body>
 </html>

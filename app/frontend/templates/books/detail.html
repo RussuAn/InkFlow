@@ -1,204 +1,222 @@
 {% extends "base.html" %}
 
-{% block title %}{{ book.title }} | InkFlow{% endblock %}
+{% block title %}{{ book.title }} | Деталі книги{% endblock %}
 
 {% block content %}
-<div style="padding: 2rem 0; max-width: 1000px; margin: 0 auto;">
+<div style="max-width: 1200px; margin: 0 auto; padding: 2rem 0;">
     
-    <div style="display: flex; gap: 3rem; flex-wrap: wrap; margin-bottom: 4rem;">
+    <a href="{{ url_for('index') }}" style="display: flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 500; margin-bottom: 2rem; font-size: 1rem;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Назад до каталогу
+    </a>
+
+    <div style="display: grid; grid-template-columns: 400px 1fr; gap: 4rem; margin-bottom: 4rem; align-items: start;">
         
-        <div style="flex: 1; min-width: 280px; max-width: 350px;">
-            
-            <div style="aspect-ratio: 2/3; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin-bottom: 1.5rem; position: relative;">
-                <img src="{{ url_for('static', filename='uploads/covers/' + book.cover_image) }}" 
-                     alt="{{ book.title }}" 
-                     style="width: 100%; height: 100%; object-fit: cover;">
-                
-                <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(4px);">
-                    {% if book.price_coins == 0 %}Free{% else %}{{ book.price_coins }} 🪙{% endif %}
-                </div>
-            </div>
-            
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 2rem;">
-                
-                {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('reader.read_book', book_id=book.id) }}" 
-                       style="display: block; text-align: center; width: 100%; padding: 14px; background: var(--text-main); color: var(--bg-body); border: none; border-radius: 30px; font-weight: 600; font-size: 1rem; cursor: pointer; text-decoration: none; transition: opacity 0.2s;">
-                       📖 Читати онлайн
-                    </a>
-                {% else %}
-                    <a href="{{ url_for('auth.login', next=request.path) }}" 
-                       style="display: block; text-align: center; width: 100%; padding: 14px; background: var(--text-main); color: var(--bg-body); border: none; border-radius: 30px; font-weight: 600; font-size: 1rem; cursor: pointer; text-decoration: none;">
-                       Увійдіть, щоб читати
-                    </a>
-                {% endif %}
-                
-                {% if is_purchased or book.price_coins == 0 %}
-                    <a href="{{ url_for('static', filename='uploads/books/' + book.file_path) }}" download 
-                       style="display: block; text-align: center; width: 100%; padding: 14px; background: transparent; border: 2px solid var(--text-main); color: var(--text-main); border-radius: 30px; font-weight: 600; text-decoration: none; transition: background 0.2s;">
-                        ⬇️ Завантажити файл
-                    </a>
-                {% else %}
-                    <a href="{{ url_for('books.buy_book_route', book_id=book.id) }}" 
-                       style="display: block; text-align: center; text-decoration: none; width: 100%; padding: 14px; background: var(--accent); color: white; border: none; border-radius: 30px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                        Купити за {{ book.price_coins }} 🪙
-                    </a>
-
-                    <button onclick="openGiftModal()" 
-                            style="width: 100%; padding: 12px; background: transparent; border: 2px solid var(--accent); color: var(--accent); border-radius: 30px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;">
-                        🎁 Подарувати другу
-                    </button>
-                {% endif %}
-            </div>
-
-            {% if current_user.is_authenticated %}
-            <div style="padding-top: 1.5rem; border-top: 1px solid var(--border);">
-                <p style="margin-bottom: 1rem; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Додати на полицю</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <a href="{{ url_for('library.update_status', book_id=book.id, status='planned') }}" class="shelf-btn {% if current_status == 'planned' %}active{% endif %}">📅 В планах</a>
-                    <a href="{{ url_for('library.update_status', book_id=book.id, status='reading') }}" class="shelf-btn {% if current_status == 'reading' %}active{% endif %}">📖 Читаю</a>
-                    <a href="{{ url_for('library.update_status', book_id=book.id, status='completed') }}" class="shelf-btn {% if current_status == 'completed' %}active{% endif %}">✅ Прочитано</a>
-                    <a href="{{ url_for('library.update_status', book_id=book.id, status='dropped') }}" class="shelf-btn {% if current_status == 'dropped' %}active{% endif %}">❌ Кинув</a>
-                </div>
-            </div>
-            {% endif %}
+        <div style="width: 100%; aspect-ratio: 3/4; border-radius: 24px; overflow: hidden; box-shadow: var(--shadow-elevated); background: var(--bg-card);">
+            <img 
+                src="{{ url_for('static', filename='uploads/covers/' + book.cover_image) }}" 
+                alt="{{ book.title }}" 
+                style="width: 100%; height: 100%; object-fit: cover; display: block;"
+            >
         </div>
 
-        <div style="flex: 2; min-width: 300px;">
-            <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; line-height: 1.2;">{{ book.title }}</h1>
+        <div style="display: flex; flex-direction: column; justify-content: center; padding-top: 0.5rem;">
             
-            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: 2rem;">
-                <a href="{{ url_for('books.search', q=book.author) }}" style="text-decoration: none;">
-                    <h3 style="font-size: 1.2rem; color: var(--accent); font-weight: 500; margin: 0;">{{ book.author }}</h3>
-                </a>
-                <span style="color: var(--border);">|</span>
-                {% if book.genre %}
-                    <a href="{{ url_for('books.search', q=book.genre) }}" 
-                       style="background: var(--bg-body); border: 1px solid var(--border); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; color: var(--text-muted); text-decoration: none; transition: all 0.2s;"
-                       onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)'"
-                       onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-muted)'">
-                        {{ book.genre }}
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                
+                <span style="color: var(--accent); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 10px;">
+                    {{ book.genre or 'Жанр' }}
+                </span>
+
+                {% if current_user.is_authenticated %}
+                <div style="display: flex; gap: 10px;">
+                    <a href="{{ url_for('library.update_status', book_id=book.id, status='planned') }}" 
+                       class="btn-icon-square {% if current_status == 'planned' %}active{% endif %}"
+                       title="{% if current_status == 'planned' %}У планах (натисніть, щоб прибрати){% else %}Прочитати пізніше{% endif %}">
+                       <svg width="22" height="22" viewBox="0 0 24 24" fill="{% if current_status == 'planned' %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
                     </a>
-                    <span style="color: var(--border);">|</span>
+
+                    {% if current_status %}
+                    <a href="{{ url_for('library.remove_book', book_id=book.id) }}" 
+                       class="btn-icon-square destructive"
+                       title="Прибрати з бібліотеки (Кинути)">
+                       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                    </a>
+                    {% endif %}
+                </div>
                 {% endif %}
-                <span style="color: var(--text-muted); font-size: 0.9rem;">⭐ {{ reviews|length }} відгуків</span>
             </div>
-            
-            <div style="background: var(--bg-card); padding: 2.5rem; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 2rem;">
-                <h4 style="margin-bottom: 1.5rem; font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1.5px; font-weight: 700;">Анотація</h4>
-                <p style="line-height: 1.8; color: var(--text-main); white-space: pre-line; font-size: 1.05rem;">{{ book.description }}</p>
+
+            <h1 style="font-size: 3.5rem; margin-bottom: 0.5rem; line-height: 1.1; font-family: var(--font-head); color: var(--text-main);">
+                {{ book.title }}
+            </h1>
+            <p style="font-size: 1.25rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+                {{ book.author }}
+            </p>
+            <p style="font-size: 1.05rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 2.5rem; max-width: 100%;">
+                {{ book.description }}
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2.5rem;">
+                <div class="meta-card"><span class="meta-label">Сторінок</span><span class="meta-value">{{ book.page_count if book.page_count > 0 else '---' }}</span></div>
+                <div class="meta-card"><span class="meta-label">Рейтинг</span><div style="display: flex; align-items: center; gap: 6px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="color: var(--accent);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span class="meta-value">{% if reviews %}{{ (reviews|sum(attribute='rating') / reviews|length)|round(1) }}{% else %}---{% endif %}</span></div></div>
+                <div class="meta-card"><span class="meta-label">Формат</span><span class="meta-value">{% if book.file_path %}{{ book.file_path.split('.')[-1] | upper }}{% else %}---{% endif %}</span></div>
+                <div class="meta-card"><span class="meta-label">Рік</span><span class="meta-value">{{ book.created_at.strftime('%Y') }}</span></div>
             </div>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-card);">
-                <div>
-                    <div style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">Мова</div>
-                    <div style="font-weight: 600;">Українська 🇺🇦</div>
-                </div>
-                <div>
-                    <div style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">Формат</div>
-                    <div style="font-weight: 600;">PDF / EPUB</div>
-                </div>
-                <div>
-                    <div style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">Дата додавання</div>
-                    <div style="font-weight: 600;">{{ book.created_at.strftime('%d.%m.%Y') if book.created_at else 'Невідомо' }}</div>
-                </div>
-                <div>
-                    <div style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">Переглядів</div>
-                    <div style="font-weight: 600;">{{ book.views_count }}</div>
-                </div>
+
+            <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
+                
+                <a href="{{ url_for('reader.read_book', book_id=book.id) }}" class="btn-primary action-btn-large">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2Z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7Z"/></svg>
+                    Читати онлайн
+                </a>
+
+                {% if current_user.is_authenticated %}
+                    {% if is_owned %}
+                         <div style="display: flex; gap: 1rem; width: 100%;">
+                            <a href="{{ url_for('static', filename='uploads/books/' + book.file_path) }}" download class="btn-secondary action-btn-large" style="flex: 1; justify-content: center;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                Завантажити файл
+                            </a>
+                            
+                            <button onclick="openGiftModal()" class="btn-secondary action-btn-large" style="width: auto; aspect-ratio: 1/1; flex-shrink: 0; display: flex; align-items: center; justify-content: center;" title="Подарувати другу">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+                            </button>
+                        </div>
+
+                    {% else %}
+                        <div style="display: flex; gap: 1rem; width: 100%;">
+                            <a href="{{ url_for('books.buy_book_route', book_id=book.id) }}" class="btn-secondary action-btn-large" style="flex: 1; justify-content: center;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                {% if book.price_coins == 0 %}Отримати безкоштовно{% else %}Купити за {{ book.price_coins }} 🪙{% endif %}
+                            </a>
+                            
+                            <button onclick="openGiftModal()" class="btn-secondary action-btn-large" style="width: auto; aspect-ratio: 1/1; flex-shrink: 0; display: flex; align-items: center; justify-content: center;" title="Подарувати другу">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+                            </button>
+                        </div>
+                    {% endif %}
+
+                {% else %}
+                    <a href="{{ url_for('auth.login', next=request.path) }}" class="btn-secondary action-btn-large">
+                        Увійти для завантаження
+                    </a>
+                {% endif %}
             </div>
+
         </div>
     </div>
 
-    <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border);">
-        <h3 style="margin-bottom: 2rem; font-size: 1.5rem;">Відгуки читачів <span style="color: var(--text-muted); font-size: 1rem; margin-left: 10px;">({{ reviews|length }})</span></h3>
+    <div class="card" style="padding: 3rem; border-radius: 24px; box-shadow: var(--shadow); background: var(--bg-card);">
+        <h2 style="font-size: 2rem; margin-bottom: 2rem; font-family: var(--font-head); color: var(--text-main);">
+            Відгуки читачів
+            <span style="margin-left: 10px; color: var(--border); font-size: 1.5rem;">☆☆☆☆☆</span>
+        </h2>
 
         {% if current_user.is_authenticated %}
-        <div style="background: var(--bg-card); padding: 2rem; border-radius: 12px; margin-bottom: 3rem; box-shadow: var(--shadow); border: 1px solid var(--border);">
-            <h4 style="margin-bottom: 1rem;">Залишити відгук</h4>
-            <form method="POST">
-                {{ form.hidden_tag() }}
-                <div style="display: grid; gap: 1rem;">
-                    <div>
-                        {{ form.rating.label(style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;") }}
-                        {{ form.rating(style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main); font-size: 1rem;") }}
+            <form method="POST" action="{{ url_for('books.book_detail', book_id=book.id) }}" style="margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border);">
+                {{ review_form.hidden_tag() }}
+                <div style="margin-bottom: 1.5rem;">{{ review_form.comment(class="review-textarea", placeholder="Поділіться враженнями про книгу...", rows="4") }}</div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="interactive-rating">
+                        <input type="hidden" name="rating" id="rating-value" value="5">
+                        <div class="stars-container">
+                            {% for i in range(1, 6) %}<svg class="star-icon" data-value="{{ i }}" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="cursor: pointer; color: var(--border); transition: color 0.2s;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>{% endfor %}
+                        </div>
                     </div>
-                    <div>
-                        {{ form.comment(style="width: 100%; min-height: 100px; padding: 15px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main); font-family: inherit; font-size: 1rem; resize: vertical;", placeholder="Що вам сподобалось, а що ні?") }}
-                    </div>
-                    <div>
-                        {{ form.submit(style="background: var(--text-main); color: var(--bg-body); padding: 10px 30px; border: none; border-radius: 30px; cursor: pointer; font-weight: 600; font-size: 1rem; transition: opacity 0.2s;") }}
-                    </div>
+                    <button type="submit" class="btn-primary" style="padding: 12px 30px; font-size: 1rem; border-radius: 24px;">Додати відгук</button>
                 </div>
             </form>
-        </div>
-        {% else %}
-            <div style="background: var(--bg-card); padding: 2rem; border-radius: 12px; text-align: center; margin-bottom: 3rem; border: 1px dashed var(--border);">
-                <p style="color: var(--text-muted); margin-bottom: 1rem;">Хочете поділитися думкою?</p>
-                <a href="{{ url_for('auth.login', next=request.path) }}" style="display: inline-block; background: var(--accent); color: white; padding: 10px 25px; border-radius: 30px; text-decoration: none; font-weight: 600;">Увійти, щоб коментувати</a>
-            </div>
         {% endif %}
 
-        <div style="display: flex; flex-direction: column; gap: 2rem;">
+        <div style="display: flex; flex-direction: column; gap: 2.5rem;">
             {% for review in reviews %}
-            <div style="display: flex; gap: 1.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border);">
-                <div style="flex-shrink: 0;">
-                    {% if review.avatar_url %}
-                        <img src="{{ url_for('static', filename='uploads/avatars/' + review.avatar_url) }}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-                    {% else %}
-                        <img src="https://ui-avatars.com/api/?name={{ review.username }}&background=random" style="width: 50px; height: 50px; border-radius: 50%;">
-                    {% endif %}
+            <div style="padding-bottom: 2.5rem; border-bottom: 1px solid var(--border); last:border-bottom: none;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                    <span style="font-weight: 700; font-size: 1.1rem; color: var(--text-main);">{{ review.display_name or review.username }}</span>
+                    <div style="display: flex; gap: 4px;">{% for i in range(1, 6) %}<svg width="18" height="18" viewBox="0 0 24 24" fill="{% if i <= review.rating %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2" style="color: var(--accent);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>{% endfor %}</div>
                 </div>
-                <div style="flex: 1;">
-                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; flex-wrap: wrap;">
-                        <div>
-                            <span style="font-weight: 700; font-size: 1.1rem; margin-right: 10px;">{{ review.display_name or review.username }}</span>
-                            <span style="font-size: 0.85rem; color: var(--text-muted);">@{{ review.username }}</span>
-                        </div>
-                        <span style="color: #f1c40f; font-size: 0.9rem;">{% for _ in range(review.rating) %}⭐{% endfor %}</span>
-                    </div>
-                    <p style="color: var(--text-main); line-height: 1.6; margin-bottom: 0.5rem;">{{ review.comment }}</p>
-                    <p style="color: var(--text-muted); font-size: 0.8rem;">{{ review.created_at.strftime('%d.%m.%Y') }}</p>
-                </div>
+                <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 0.5rem;">{{ review.comment }}</p>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">{{ review.created_at.strftime('%d листопада %Y') }}</span>
             </div>
-            {% else %}
-                <div style="text-align: center; color: var(--text-muted); padding: 2rem;">
-                    <p style="font-size: 3rem; margin-bottom: 1rem;">💭</p>
-                    <p>Поки що немає відгуків.</p>
-                </div>
             {% endfor %}
         </div>
     </div>
+
+    {% if current_user.is_authenticated and current_user.role == 'admin' %}
+        <div style="text-align: center; margin-top: 5rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+            <form method="POST" action="{{ url_for('books.delete_book_route', book_id=book.id) }}" onsubmit="return confirm('Ви впевнені?');" style="display: inline-block;">
+                <input type="hidden" name="csrf_token" value="{{ review_form.csrf_token.current_token }}">
+                <button type="submit" class="btn-danger" style="padding: 14px 40px; font-size: 1rem; border-radius: 16px; display: flex; align-items: center; gap: 10px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                    Видалити книгу
+                </button>
+            </form>
+        </div>
+    {% endif %}
 </div>
 
-<div id="gift-modal" class="modal-overlay">
-    <div class="modal-content">
-        <button class="close-modal" onclick="closeGiftModal()">&times;</button>
-        <div style="text-align: center; margin-bottom: 1.5rem;">
-            <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎁</div>
-            <h3 style="margin: 0;">Зробити подарунок</h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Подаруйте книгу "{{ book.title }}"</p>
-        </div>
+<div id="gift-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content card" style="padding: 3rem; border-radius: 24px; max-width: 480px; text-align: center; position: relative;">
+        <button class="close-modal" onclick="closeGiftModal()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        <div style="margin: 0 auto 1rem auto; width: 80px; height: 80px; border-radius: 50%; background: var(--input-bg); display: flex; align-items: center; justify-content: center; color: var(--accent);"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
+        <h3 style="margin: 0; font-size: 2rem; margin-bottom: 0.5rem; font-family: var(--font-head);">Зробити подарунок</h3>
+        <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 2rem;">Введіть нікнейм друга, щоб подарувати книгу "{{ book.title }}"</p>
         <form action="{{ url_for('books.gift_book_route', book_id=book.id) }}" method="POST">
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Нікнейм друга</label>
-                <div style="position: relative;">
-                    <span style="position: absolute; left: 12px; top: 11px; color: var(--text-muted);">@</span>
-                    <input type="text" name="recipient_username" placeholder="username" required style="width: 100%; padding: 10px 10px 10px 30px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main); font-size: 1rem;">
-                </div>
+            <input type="hidden" name="csrf_token" value="{{ review_form.csrf_token.current_token }}">
+            <div style="margin-bottom: 1.5rem; text-align: left;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-main);">Нікнейм</label>
+                <input type="text" name="recipient_username" placeholder="@username" required style="width: 100%; padding: 14px 14px 14px 35px; border-radius: 12px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text-main); outline: none; font-size: 1rem;">
             </div>
-            <div style="background: var(--bg-body); padding: 10px; border-radius: 8px; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; text-align: center;">
-                З вашого балансу буде списано <strong>{{ book.price_coins }} 🪙</strong>
+            <div style="background: var(--input-bg); padding: 14px; border-radius: 12px; font-size: 0.95rem; color: var(--text-muted); margin-bottom: 2rem;">
+                Вартість подарунка: <strong style="color: var(--text-main);">{{ book.price_coins }} 🪙</strong>
             </div>
-            <button type="submit" style="width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 30px; font-weight: 600; cursor: pointer;">Надіслати подарунок</button>
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 14px; font-size: 1.1rem; border-radius: 12px;">Надіслати подарунок</button>
         </form>
     </div>
 </div>
 
+<style>
+    /* ... стилі з попередньої відповіді ... */
+    .btn-icon-square { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 14px; background-color: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow); }
+    .btn-icon-square:hover { transform: translateY(-2px); box-shadow: var(--shadow-elevated); color: var(--text-main); }
+    .btn-icon-square.active { background-color: var(--accent); color: white; border-color: var(--accent); }
+    .btn-icon-square.destructive:hover { border-color: #EF4444; color: #EF4444; }
+    .meta-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; }
+    .meta-label { font-size: 0.9rem; color: var(--text-muted); }
+    .meta-value { font-size: 1.4rem; font-weight: 700; color: var(--text-main); }
+    .action-btn-large { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 18px; border-radius: 16px; font-size: 1.15rem; font-weight: 600; width: 100%; text-decoration: none; cursor: pointer; border: 1px solid transparent; transition: transform 0.2s, box-shadow 0.2s; }
+    .action-btn-large:hover { transform: translateY(-2px); box-shadow: var(--shadow-elevated); }
+    .btn-secondary { background-color: var(--input-bg); border-color: var(--border); color: var(--text-main); }
+    .review-textarea { width: 100%; padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text-main); font-family: inherit; font-size: 1rem; resize: none; outline: none; }
+    .review-textarea:focus { border-color: var(--accent); }
+    .stars-container { display: flex; gap: 4px; }
+    .star-icon.filled { fill: var(--accent); color: var(--accent) !important; }
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+</style>
+
 <script>
     const modal = document.getElementById('gift-modal');
-    function openGiftModal() { modal.classList.add('active'); }
-    function closeGiftModal() { modal.classList.remove('active'); }
+    function openGiftModal() { modal.style.display = 'flex'; }
+    function closeGiftModal() { modal.style.display = 'none'; }
     modal.addEventListener('click', (e) => { if (e.target === modal) closeGiftModal(); });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const stars = document.querySelectorAll('.star-icon');
+        const ratingInput = document.getElementById('rating-value');
+        let currentRating = 5;
+        function updateStars(value) {
+            stars.forEach(star => {
+                const starVal = parseInt(star.dataset.value);
+                if (starVal <= value) { star.classList.add('filled'); } else { star.classList.remove('filled'); }
+            });
+        }
+        updateStars(currentRating);
+        stars.forEach(star => {
+            star.addEventListener('click', () => { currentRating = parseInt(star.dataset.value); ratingInput.value = currentRating; updateStars(currentRating); });
+            star.addEventListener('mouseenter', () => { updateStars(parseInt(star.dataset.value)); });
+            star.addEventListener('mouseleave', () => { updateStars(currentRating); });
+        });
+    });
 </script>
 {% endblock %}

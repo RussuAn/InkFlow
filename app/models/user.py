@@ -5,7 +5,7 @@ import mysql.connector
 from datetime import date, timedelta
 
 class User(UserMixin):
-    def __init__(self, id, username, email, password_hash, role='user', avatar_url=None, balance=0, bio=None, display_name=None, streak_count=0):
+    def __init__(self, id, username, email, password_hash, role='user', avatar_url=None, balance=0, bio=None, display_name=None, streak_count=0, created_at=None):
         self.id = id
         self.username = username
         self.email = email
@@ -16,6 +16,7 @@ class User(UserMixin):
         self.bio = bio
         self.display_name = display_name or username
         self.streak_count = streak_count
+        self.created_at = created_at
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
@@ -61,7 +62,8 @@ def get_user_by_email(email):
             balance=user_data['balance'],
             bio=user_data.get('bio'),
             display_name=user_data.get('display_name'),
-            streak_count=user_data.get('streak_count')
+            streak_count=user_data.get('streak_count'),
+            created_at=user_data.get('created_at')
         )
     return None
 
@@ -83,7 +85,8 @@ def get_user_by_id(user_id):
             balance=user_data['balance'],
             bio=user_data.get('bio'),
             display_name=user_data.get('display_name'),
-            streak_count=user_data.get('streak_count')
+            streak_count=user_data.get('streak_count'),
+            created_at=user_data.get('created_at')
         )
     return None
 
@@ -105,7 +108,8 @@ def get_user_by_username(username):
             balance=user_data['balance'],
             bio=user_data.get('bio'),
             display_name=user_data.get('display_name'),
-            streak_count=user_data.get('streak_count')
+            streak_count=user_data.get('streak_count'),
+            created_at=user_data.get('created_at')
         )
     return None
 

@@ -1,9 +1,10 @@
 import os
 import secrets
+import PyPDF2
 from flask import Blueprint, render_template, redirect, url_for, flash, current_app, abort, request, jsonify
 from flask_login import login_required, current_user
 from app.forms.book import AddBookForm
-from app.models.book import create_book, get_book_by_id, search_books
+from app.models.book import create_book, get_book_by_id, search_books, delete_book
 from app.models.library import get_user_book_status
 from app.models.commerce import purchase_book, is_book_purchased
 from app.forms.review import ReviewForm
@@ -31,9 +32,20 @@ def add_book():
     if form.validate_on_submit():
         cover_filename = save_file(form.cover.data, 'covers')
         book_filename = save_file(form.book_file.data, 'books')
-        
-        if create_book(form.title.data, form.author.data, form.description.data, cover_filename, book_filename, form.price_coins.data, form.genre.data):
-            flash(f'Книгу "{form.title.data}" додано!', 'success')
+
+        page_count = 0
+        try:
+            book_path = os.path.join(current_app.root_path, 'frontend', 'static', 'uploads', 'books', book_filename)
+
+            with open(book_path, 'rb') as f:
+                pdf_reader = PyPDF2.PdfReader(f)
+                page_count = len(pdf_reader.pages)
+        except Exception as e:
+            current_app.logger.error(f"Error counting pages for {book_filename}: {e}")
+        if create_book(form.title.data, form.author.data, form.description.data, 
+                       cover_filename, book_filename, form.price_coins.data, 
+                       page_count, form.genre.data):
+            flash(f'Книгу "{form.title.data}" додано! Сторінок: {page_count}', 'success')
             return redirect(url_for('index'))
         else:
             flash('Помилка БД.', 'error')
@@ -47,44 +59,58 @@ def book_detail(book_id):
     
     current_status = None
     is_purchased = False
+    is_owned = False
+    is_reading = False
     
     if current_user.is_authenticated:
         current_status = get_user_book_status(current_user.id, book.id)
-        is_purchased = is_book_purchased(current_user.id, book.id)
-        if book.price_coins == 0: is_purchased = True
-    
-    # Відгуки
+        is_reading = (current_status == 'reading')
+
+        is_purchased_check = is_book_purchased(current_user.id, book.id)
+        if book.price_coins == 0 or is_purchased_check:
+             is_owned = True
+
     reviews = get_book_reviews(book.id)
-    form = ReviewForm()
+
+    average_rating = 0
+    if reviews:
+        total_rating = sum(r['rating'] for r in reviews)
+        average_rating = total_rating / len(reviews)
+
+    review_form = ReviewForm()
     
-    if form.validate_on_submit() and current_user.is_authenticated:
-        if add_review(current_user.id, book.id, int(form.rating.data), form.comment.data):
+    if review_form.validate_on_submit() and current_user.is_authenticated:
+        if add_review(current_user.id, book.id, int(review_form.rating.data), review_form.comment.data):
             flash('Відгук додано!', 'success')
             return redirect(url_for('books.book_detail', book_id=book.id))
         else:
-            flash('Помилка.', 'error')
+            flash('Помилка при додаванні відгуку.', 'error')
 
     return render_template('books/detail.html', 
                            book=book, 
                            current_status=current_status, 
-                           is_purchased=is_purchased,
+                           is_owned=is_owned,
+                           is_reading=is_reading,
                            reviews=reviews,
-                           form=form)
+                           average_rating=average_rating,
+                           review_form=review_form)
 
-@bp.route('/buy/<int:book_id>')
+@bp.route('/buy/<int:book_id>', methods=['POST', 'GET'])
 @login_required
 def buy_book_route(book_id):
     book = get_book_by_id(book_id)
     if not book: abort(404)
+    
     success, message = purchase_book(current_user.id, book.id, book.price_coins)
+    
     if success:
         flash(f'Придбано: "{book.title}"!', 'success')
-        return redirect(url_for('books.book_detail', book_id=book.id))
     else:
         flash(message, 'error')
         if "Недостатньо" in message:
              return redirect(url_for('user.topup', next=url_for('books.book_detail', book_id=book.id)))
-        return redirect(url_for('books.book_detail', book_id=book.id))
+             
+    return redirect(url_for('books.book_detail', book_id=book.id))
 
 @bp.route('/gift/<int:book_id>', methods=['POST'])
 @login_required
@@ -107,6 +133,35 @@ def gift_book_route(book_id):
              return redirect(url_for('user.topup', next=url_for('books.book_detail', book_id=book.id)))
 
     return redirect(url_for('books.book_detail', book_id=book.id))
+
+@bp.route('/delete/<int:book_id>', methods=['POST'])
+@login_required
+def delete_book_route(book_id):
+    if current_user.role != 'admin':
+        flash('У вас немає прав для видалення книги.', 'error')
+        return redirect(url_for('books.book_detail', book_id=book.id))
+    
+    book = get_book_by_id(book_id)
+    if not book:
+        abort(404)
+
+    if delete_book(book.id):
+        try:
+            upload_folder = os.path.join(current_app.root_path, 'frontend', 'static', 'uploads')
+            cover_path = os.path.join(upload_folder, 'covers', book.cover_image)
+            if os.path.exists(cover_path): os.remove(cover_path)
+            book_path = os.path.join(upload_folder, 'books', book.file_path)
+            if os.path.exists(book_path): os.remove(book_path)
+            
+            flash(f'Книгу "{book.title}" успішно видалено!', 'success')
+            return redirect(url_for('index'))
+        except Exception as e:
+            current_app.logger.error(f"Error deleting files: {e}")
+            flash(f'Книгу видалено з БД, але виникла помилка з файлами.', 'warning')
+            return redirect(url_for('index'))
+    else:
+        flash('Помилка бази даних.', 'error')
+        return redirect(url_for('books.book_detail', book_id=book.id))
 
 @bp.route('/search')
 def search():

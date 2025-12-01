@@ -21,7 +21,21 @@ def add_to_shelf(user_id, book_id, status):
         return False
     finally:
         cursor.close()
-
+        
+def remove_from_shelf(user_id, book_id):
+    db = get_db()
+    cursor = db.cursor()
+    try:
+        query = "DELETE FROM library_items WHERE user_id = %s AND book_id = %s"
+        cursor.execute(query, (user_id, book_id))
+        db.commit()
+        return True
+    except mysql.connector.Error as err:
+        print(f"Library Error: {err}")
+        return False
+    finally:
+        cursor.close()
+        
 def get_user_book_status(user_id, book_id):
     db = get_db()
     cursor = db.cursor(dictionary=True)

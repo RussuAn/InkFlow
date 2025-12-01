@@ -3,88 +3,174 @@
 {% block title %}Поповнення гаманця | InkFlow{% endblock %}
 
 {% block content %}
-<div style="max-width: 500px; margin: 2rem auto;">
+<div style="max-width: 1000px; margin: 0 auto; padding: 3rem 0;">
     
-    <div style="text-align: center; margin-bottom: 2rem;">
-        <h2 style="margin-bottom: 0.5rem;">Поповнення балансу</h2>
-        <p style="color: var(--text-muted);">Безпечна оплата через InkFlow Pay</p>
-    </div>
+    <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Поповнення гаманця</h1>
+    <p style="color: var(--text-muted); margin-bottom: 3rem; font-size: 1.1rem;">Оберіть суму та введіть дані для оплати.</p>
 
-    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; border-radius: 16px; color: white; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(118, 75, 162, 0.4); position: relative; overflow: hidden;">
-        <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;">
         
-        <div style="font-size: 1.5rem; margin-bottom: 2rem; letter-spacing: 2px; font-family: monospace;">
-            •••• •••• •••• 4242
-        </div>
-        <div style="display: flex; justify-content: space-between;">
-            <div>
-                <div style="font-size: 0.7rem; opacity: 0.8; text-transform: uppercase;">Власник</div>
-                <div style="font-size: 0.9rem; font-weight: 600;">{{ current_user.display_name.upper() if current_user.display_name else 'USER NAME' }}</div>
-            </div>
-            <div>
-                <div style="font-size: 0.7rem; opacity: 0.8; text-transform: uppercase;">Термін</div>
-                <div style="font-size: 0.9rem; font-weight: 600;">12/28</div>
-            </div>
-        </div>
-    </div>
-
-    <div style="background: var(--bg-card); padding: 2rem; border-radius: 16px; box-shadow: var(--shadow);">
-        <form method="POST">
+        <div>
             
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Сума поповнення</label>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
-                    <label class="amount-option">
-                        <input type="radio" name="amount" value="50" checked>
-                        <span>50 🪙</span>
-                    </label>
-                    <label class="amount-option">
-                        <input type="radio" name="amount" value="100">
-                        <span>100 🪙</span>
-                    </label>
-                    <label class="amount-option">
-                        <input type="radio" name="amount" value="500">
-                        <span>500 🪙</span>
-                    </label>
-                </div>
-            </div>
-
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Номер картки</label>
-                <input type="text" placeholder="0000 0000 0000 0000" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-body); color: var(--text-main);">
-            </div>
-
-            <div style="display: flex; gap: 15px; margin-bottom: 2rem;">
-                <div style="flex: 1;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Термін</label>
-                    <input type="text" placeholder="MM/YY" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-body); color: var(--text-main);">
-                </div>
-                <div style="flex: 1;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">CVV</label>
-                    <input type="text" placeholder="123" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-body); color: var(--text-main);">
-                </div>
-            </div>
-
-            <button type="submit" style="width: 100%; padding: 14px; background: var(--text-main); color: var(--bg-body); border: none; border-radius: 30px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: opacity 0.2s;">
-                Оплатити та поповнити
-            </button>
+            <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem;">Оберіть суму</h3>
             
-            <p style="text-align: center; margin-top: 1rem; color: var(--text-muted); font-size: 0.8rem;">
-                Це тестовий режим. Реальні кошти не списуються.
-            </p>
-        </form>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2.5rem;">
+                {% set amounts = [50, 100, 250, 500] %}
+                {% for amount in amounts %}
+                <label class="amount-option" style="cursor: pointer;">
+                    <input type="radio" name="amount" value="{{ amount }}" {% if amount == 100 %}checked{% endif %} form="payment-form">
+                    <div class="card no-padding" style="text-align: center; padding: 1.5rem; border-radius: 16px; border: none; box-shadow: var(--shadow);">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 0.5rem; color: var(--accent);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2Z"/><path d="M15 6h-6"/><path d="M8 18c-3 0-5 2-5 4"/></svg>
+                            <span style="font-family: var(--font-head); font-size: 1.75rem; font-weight: 600;">{{ amount }}</span>
+                        </div>
+                        <p style="font-size: 0.95rem; color: var(--text-muted);">
+                            {{ amount }} грн
+                        </p>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+
+            <div 
+                class="mock-card-display"
+                style="background: linear-gradient(135deg, #B58A59 0%, #9D7449 100%); 
+                       padding: 2rem; border-radius: 16px; color: white; 
+                       box-shadow: 0 20px 60px rgba(181, 138, 89, 0.4); 
+                       position: relative; overflow: hidden; min-height: 200px;"
+            >
+                <div style="position: absolute; top: -50px; right: -50px; width: 120px; height: 120px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                <div style="position: absolute; bottom: -30px; left: -30px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                
+                <div style="position: relative; z-index: 1;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 2rem;"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                    
+                    <div style="font-size: 1.5rem; font-weight: 600; letter-spacing: 0.1em; margin-bottom: 1.5rem;">
+                        •••• •••• •••• ••••
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; font-size: 0.95rem;">
+                        <div>
+                            <p style="font-size: 0.75rem; opacity: 0.7;">ВЛАСНИК КАРТКИ</p>
+                            <p style="font-weight: 600; text-transform: uppercase;">{{ current_user.display_name.upper() if current_user.display_name else 'USER NAME' }}</p>
+                        </div>
+                        <div>
+                            <p style="font-size: 0.75rem; opacity: 0.7;">ДІЙСНА ДО</p>
+                            <p style="font-weight: 600;">MM/YY</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card" style="padding: 2.5rem; border-radius: 24px;">
+            <h3 style="font-size: 1.5rem; margin-bottom: 2rem;">Дані для оплати</h3>
+            
+            <form method="POST" id="payment-form">
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-muted);">Номер картки</label>
+                    <input type="text" placeholder="1234 5678 9012 3456" style="width: 100%;" required>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-muted);">Ім'я власника</label>
+                    <input type="text" placeholder="ANNA MELNYK" style="width: 100%;" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-muted);">Термін дії</label>
+                        <input type="text" placeholder="MM/YY" style="width: 100%;" required>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-muted);">CVV</label>
+                        <input type="text" placeholder="123" style="width: 100%;" required>
+                    </div>
+                </div>
+                
+                <div class="payment-summary card no-padding" style="padding: 1rem; margin-bottom: 2rem; border-radius: 12px; border: 1px solid var(--border); box-shadow: none; background: var(--input-bg);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="color: var(--text-muted);">Монети</span>
+                        <span style="font-weight: 600;">100 🪙</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--text-muted);">До сплати</span>
+                        <span style="font-family: var(--font-head); font-size: 1.5rem; font-weight: 600; color: var(--accent);">
+                            95 грн
+                        </span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 14px 30px; font-weight: 600; font-size: 1.05rem;">
+                    Поповнити гаманець
+                </button>
+                
+                <p style="text-align: center; margin-top: 1rem; color: var(--text-muted); font-size: 0.85rem;">
+                    🔒 Це демо-версія. Реальні платежі не обробляються.
+                </p>
+            </form>
+        </div>
     </div>
 </div>
 
 <style>
     .amount-option input { display: none; }
-    .amount-option span {
-        display: block; text-align: center; padding: 10px;
-        border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
-        font-weight: 600; transition: all 0.2s;
+    
+    .amount-option input:checked + .card {
+        background-color: var(--accent);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(181, 138, 89, 0.4);
     }
-    .amount-option input:checked + span {
-        background: var(--accent); color: white; border-color: var(--accent);
+
+    .amount-option input:checked + .card div, 
+    .amount-option input:checked + .card div span,
+    .amount-option input:checked + .card p {
+        color: white !important; 
+    }
+    
+    .amount-option input:checked + .card svg {
+        stroke: white !important; 
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const paymentForm = document.getElementById('payment-form');
+        const amountOptions = document.querySelectorAll('.amount-option input[type="radio"]');
+        const summaryDiv = document.querySelector('.payment-summary');
+
+        const priceMap = {
+            50: { coins: 50, price: 50, label: "50 грн" },
+            100: { coins: 100, price: 95, label: "95 грн" },
+            250: { coins: 250, price: 225, label: "225 грн" },
+            500: { coins: 500, price: 425, label: "425 грн" }
+        };
+
+        function updateSummary() {
+            let selectedAmount = document.querySelector('.amount-option input:checked').value;
+            let data = priceMap[selectedAmount];
+
+            summaryDiv.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <span style="color: var(--text-muted);">Монети</span>
+                    <span style="font-weight: 600;">${data.coins} 🪙</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--text-muted);">До сплати</span>
+                    <span style="font-family: var(--font-head); font-size: 1.5rem; font-weight: 600; color: var(--accent);">
+                        ${data.price} грн
+                    </span>
+                </div>
+            `;
+        }
+
+        amountOptions.forEach(radio => {
+            radio.addEventListener('change', updateSummary);
+        });
+
+        updateSummary();
+    });
+</script>
 {% endblock %}

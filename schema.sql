@@ -32,7 +32,8 @@ CREATE TABLE books (
 
     file_path VARCHAR(255),
     price_coins INT DEFAULT 0,
-
+    page_count INT DEFAULT 0,
+    
     views_count INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

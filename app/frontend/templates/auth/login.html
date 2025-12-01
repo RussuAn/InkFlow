@@ -1,36 +1,179 @@
 {% extends "base.html" %}
 
-{% block title %}Вхід - InkFlow{% endblock %}
+{% block title %}Вхід | InkFlow{% endblock %}
+
+{% block navbar %}{% endblock %}
 
 {% block content %}
-<div class="auth-container" style="max-width: 400px; margin: 4rem auto; padding: 2rem; background: var(--bg-card); border-radius: 12px; box-shadow: var(--shadow);">
-    <h2 style="text-align: center; margin-bottom: 2rem; color: var(--accent);">Вхід у бібліотеку</h2>
+<style>
+    main { padding-top: 0 !important; } 
+</style>
 
-    <form method="POST" action="">
-        {{ form.hidden_tag() }}
-
-        <div style="margin-bottom: 1.5rem;">
-            {{ form.email.label(style="display: block; margin-bottom: 0.5rem; font-weight: 600;") }}
-            {{ form.email(style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-body); color: var(--text-main);") }}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        
+        <div class="auth-header">
+            <div class="auth-logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2Z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7Z"/></svg>
+                <span style="font-family: var(--font-head); font-size: 1.8rem; font-weight: 600; color: var(--text-main);">InkFlow.</span>
+            </div>
+            <h1 style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--text-main); font-family: var(--font-head);">Вхід</h1>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Увійдіть, щоб продовжити читання</p>
         </div>
 
-        <div style="margin-bottom: 1.5rem;">
-            {{ form.password.label(style="display: block; margin-bottom: 0.5rem; font-weight: 600;") }}
-            {{ form.password(style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-body); color: var(--text-main);") }}
-        </div>
+        <form method="POST">
+            {{ form.csrf_token }}
 
-        <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 10px;">
-            {{ form.remember() }} 
-            {{ form.remember.label(style="cursor: pointer;") }}
-        </div>
+            <div class="form-group">
+                <label class="auth-label">Нікнейм або Email</label>
+                {{ form.email_or_username(class="auth-input", placeholder="username@email.com") }}
+                {% for error in form.email_or_username.errors %}
+                    <span class="auth-error">{{ error }}</span>
+                {% endfor %}
+            </div>
 
-        <div style="text-align: center;">
-            {{ form.submit(style="background: var(--text-main); color: var(--bg-body); padding: 12px 30px; border: none; border-radius: 30px; cursor: pointer; font-size: 1rem; font-weight: 600;") }}
+            <div class="form-group">
+                <label class="auth-label">Пароль</label>
+                <div style="position: relative;">
+                    {{ form.password(class="auth-input", id="login-password", placeholder="••••••••") }}
+                    <button type="button" onclick="togglePassword('login-password', this)" class="password-toggle">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                </div>
+                {% for error in form.password.errors %}
+                    <span class="auth-error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="auth-button">
+                Увійти
+            </button>
+        </form>
+        
+        <div class="auth-footer">
+            <span style="color: var(--text-muted);">Немає акаунту?</span>
+            <a href="{{ url_for('auth.register') }}" style="color: var(--accent); font-weight: 600; margin-left: 5px;">Зареєструватися</a>
         </div>
-    </form>
-    
-    <p style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem;">
-        Ще не маєте акаунту? <a href="{{ url_for('auth.register') }}" style="color: var(--accent); font-weight: bold;">Зареєструватися</a>
-    </p>
+    </div>
 </div>
+
+<style>
+    .auth-wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background-color: var(--bg-body);
+        transition: background-color 0.3s ease;
+    }
+
+    .auth-card {
+        background-color: var(--bg-card);
+        padding: 3rem;
+        border-radius: 24px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: var(--shadow-elevated);
+        border: 1px solid var(--border);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .auth-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .auth-label {
+        display: block;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-input {
+        width: 100%;
+        padding: 12px 16px;
+        background-color: var(--input-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        color: var(--text-main);
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .auth-input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px var(--accent-light);
+    }
+    
+    .auth-input::placeholder {
+        color: var(--text-muted);
+        opacity: 0.7;
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        color: var(--text-muted);
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+    
+    .password-toggle:hover {
+        opacity: 1;
+        color: var(--text-main);
+    }
+
+    .auth-button {
+        width: 100%;
+        padding: 14px;
+        background-color: var(--accent);
+        color: #FFFFFF;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.05rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.1s;
+        box-shadow: 0 8px 24px rgba(181, 138, 89, 0.3);
+        margin-top: 1rem;
+    }
+
+    .auth-button:hover {
+        background-color: var(--accent-hover);
+        transform: translateY(-1px);
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 2rem;
+        font-size: 0.95rem;
+    }
+
+    .auth-error {
+        color: #DC2626;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        display: block;
+    }
+</style>
 {% endblock %}

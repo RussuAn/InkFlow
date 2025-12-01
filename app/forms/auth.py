@@ -5,6 +5,11 @@ from app.models.user import get_user_by_email, get_user_by_username
 
 
 class RegistrationForm(FlaskForm):
+    display_name = StringField('Ім\'я для відображення', validators=[
+        DataRequired(message="Це поле обов'язкове"),
+        Length(min=2, max=100, message="Ім'я має бути від 2 до 100 символів")
+    ])
+    
     username = StringField('Нікнейм', validators=[
         DataRequired(message="Це поле обов'язкове"),
         Length(min=2, max=50, message="Нікнейм має бути від 2 до 50 символів")
@@ -39,9 +44,8 @@ class RegistrationForm(FlaskForm):
         
 
 class LoginForm(FlaskForm):
-    email = StringField('Email', validators=[
-        DataRequired(message="Введіть email"),
-        Email(message="Некоректний email")
+    email_or_username = StringField('Нікнейм або Email', validators=[
+        DataRequired(message="Введіть нікнейм або email")
     ])
     
     password = PasswordField('Пароль', validators=[

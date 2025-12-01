@@ -35,12 +35,15 @@ def profile():
     
     books_reading = get_books_by_shelf(current_user.id, 'reading')
     books_completed = get_books_by_shelf(current_user.id, 'completed')
+    books_planned = get_books_by_shelf(current_user.id, 'planned')
     
 
     return render_template('user/profile.html', 
+                           user=current_user,
                            avatar_file=avatar_file,
                            books_reading=books_reading,
-                           books_completed=books_completed)
+                           books_completed=books_completed,
+                           books_planned=books_planned)
 
 
 @bp.route('/edit', methods=['GET', 'POST'])

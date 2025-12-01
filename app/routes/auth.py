@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, current_user
 from app.forms.auth import RegistrationForm, LoginForm
-from app.models.user import create_user, get_user_by_email, update_user_streak
+from app.models.user import create_user, get_user_by_email, update_user_streak, get_user_by_username
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -11,7 +11,7 @@ def register():
     form = RegistrationForm()
 
     if form.validate_on_submit():
-        if create_user(form.username.data, form.email.data, form.password.data):
+        if create_user(form.username.data, form.email.data, form.password.data, form.display_name.data):
             flash('Акаунт успішно створено! Тепер ви можете увійти.', 'success')
             return redirect(url_for('index'))
         else:
@@ -28,7 +28,10 @@ def login():
     form = LoginForm()
     
     if form.validate_on_submit():
-        user = get_user_by_email(form.email.data)
+        login_id = form.email_or_username.data
+        user = get_user_by_email(login_id)
+        if not user:
+            user = get_user_by_username(login_id)
 
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember.data)

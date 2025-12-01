@@ -5,78 +5,97 @@
 {% endblock %}
 
 {% block content %}
-<div style="padding-bottom: 3rem;">
-    
-    <div style="text-align: center; margin-bottom: 3rem; padding: 2rem 0;">
-        {% if search_query %}
-            <p style="color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px;">Результати пошуку</p>
-            <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">"{{ search_query }}"</h1>
-            <a href="{{ url_for('index') }}" style="display: inline-block; padding: 8px 20px; border: 1px solid var(--border); border-radius: 20px; color: var(--text-main); text-decoration: none; font-size: 0.9rem; transition: background 0.2s;">
-                &larr; Повернутися до бібліотеки
-            </a>
-        {% else %}
-            <h1 style="font-size: 3rem; margin-bottom: 0.5rem; font-family: var(--font-head);">Бібліотека InkFlow</h1>
-            <p style="color: var(--text-muted); font-size: 1.1rem;">Затишне місце для твоїх історій.</p>
-            
-            {% if current_user.is_authenticated and current_user.role == 'admin' %}
-                <div style="margin-top: 1.5rem;">
-                    <a href="{{ url_for('books.add_book') }}" style="background: var(--text-main); color: var(--bg-body); padding: 10px 25px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 0.9rem; box-shadow: var(--shadow);">
-                        + Додати книгу
-                    </a>
-                </div>
-            {% endif %}
-        {% endif %}
-    </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 2.5rem;">
+    <div style="padding-bottom: 4rem;">
         
-        {% for book in books %}
-            <a href="{{ url_for('books.book_detail', book_id=book.id) }}" style="text-decoration: none; color: inherit; display: block;">
-                <div class="book-card" style="transition: transform 0.2s; height: 100%; display: flex; flex-direction: column;">
-                    
-                    <div style="aspect-ratio: 2/3; overflow: hidden; border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 1rem; position: relative;">
-                        <img src="{{ url_for('static', filename='uploads/covers/' + book.cover_image) }}" 
-                             alt="{{ book.title }}" 
-                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;"
-                             onmouseover="this.style.transform='scale(1.05)'"
-                             onmouseout="this.style.transform='scale(1)'">
-                        
-                        {% if book.genre %}
-                        <div style="position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.9); color: #333; padding: 4px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: 600; backdrop-filter: blur(4px); box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                            {{ book.genre }}
-                        </div>
-                        {% endif %}
+        <div style="text-align: center; margin-bottom: 4rem; padding: 3rem 0;">
+            {% if search_query %}
+                
+                <p style="color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px;">Результати пошуку</p>
+                <h1 style="font-size: 2.5rem; margin-bottom: 1.5rem; color: var(--text-main);">"{{ search_query }}"</h1>
+                <a href="{{ url_for('index') }}" class="btn-secondary" style="padding: 10px 25px; font-weight: 500;">
+                    &larr; Повернутися до каталогу
+                </a>
 
-                        <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; backdrop-filter: blur(4px);">
-                            {% if book.price_coins == 0 %}Free{% else %}{{ book.price_coins }} 🪙{% endif %}
-                        </div>
+            {% else %}
+                
+                <h1 style="font-size: 3rem; margin-bottom: 1rem; line-height: 1.2; color: var(--text-main); font-family: var(--font-head);">
+                    Відкрийте світ історій
+                </h1>
+                <p style="color: var(--text-muted); font-size: 1.15rem; max-width: 600px; margin: 0 auto;">
+                    Зануртеся в атмосферу затишного читання з колекцією найкращих книг
+                </p>
+                
+                {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                    <div style="margin-top: 2rem;">
+                        <a href="{{ url_for('books.add_book') }}" class="btn-primary" style="padding: 12px 30px;">
+                            + Додати книгу
+                        </a>
                     </div>
-                    
-                    <div style="flex: 1;">
-                        <h3 style="font-size: 1.1rem; margin-bottom: 0.3rem; line-height: 1.4;">{{ book.title }}</h3>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">{{ book.author }}</p>
-                    </div>
-                </div>
-            </a>
-        {% else %}
-            <div style="grid-column: 1/-1; text-align: center; padding: 4rem 0; color: var(--text-muted);">
-                <div style="font-size: 3rem; margin-bottom: 1rem;">😕</div>
-                {% if search_query %}
-                    <p style="font-size: 1.1rem;">Ми нічого не знайшли за запитом "<strong>{{ search_query }}</strong>".</p>
-                    <p style="font-size: 0.9rem;">Спробуйте змінити ключові слова або категорію.</p>
-                {% else %}
-                    <p style="font-size: 1.1rem;">Бібліотека поки що порожня.</p>
-                    <p style="font-size: 0.9rem;">Завітайте пізніше або додайте першу книгу!</p>
                 {% endif %}
-            </div>
-        {% endfor %}
+            {% endif %}
+        </div>
 
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem;">
+            
+            {% for book in books %}
+                <a href="{{ url_for('books.book_detail', book_id=book.id) }}" style="text-decoration: none; color: inherit; display: block;">
+                    <div class="book-card card" style="height: 100%; display: flex; flex-direction: column; padding: 0; overflow: hidden; border: none; border-radius: 24px; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                        
+                        <div style="aspect-ratio: 3/4; position: relative; overflow: hidden;">
+                            <img src="{{ url_for('static', filename='uploads/covers/' + book.cover_image) }}" 
+                                 alt="{{ book.title }}" 
+                                 style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;">
+                            
+                            {% if book.genre %}
+                            <div style="position: absolute; top: 16px; right: 16px; background-color: rgba(181, 138, 89, 0.9); color: white; padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; backdrop-filter: blur(4px);">
+                                {{ book.genre }}
+                            </div>
+                            {% endif %}
+
+                            <div style="position: absolute; bottom: 16px; left: 16px; background-color: rgba(42, 37, 34, 0.8); color: #B58A59; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; backdrop-filter: blur(4px); display: flex; align-items: center; gap: 4px;">
+                                {% if book.price_coins == 0 %}
+                                    Безкоштовно
+                                {% else %}
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> 
+                                    {{ book.price_coins }}
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 1.5rem; background-color: var(--bg-card);">
+                            <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.3; color: var(--text-main); font-family: var(--font-head);">
+                                {{ book.title }}
+                            </h3>
+                            <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">
+                                {{ book.author }}
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            {% else %}
+                <div style="grid-column: 1/-1; text-align: center; padding: 6rem 0; color: var(--text-muted);">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">😕</div>
+                    {% if search_query %}
+                        <p style="font-size: 1.1rem;">Ми нічого не знайшли за запитом "<strong>{{ search_query }}</strong>".</p>
+                        <p style="font-size: 0.9rem;">Спробуйте змінити ключові слова або категорію.</p>
+                    {% else %}
+                        <p style="font-size: 1.1rem;">Бібліотека поки що порожня.</p>
+                        <p style="font-size: 0.9rem;">Завітайте пізніше або додайте першу книгу!</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+        </div>
     </div>
-</div>
 
 <style>
     .book-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-elevated);
+    }
+    .book-card:hover img {
+        transform: scale(1.05);
     }
 </style>
 {% endblock %}
