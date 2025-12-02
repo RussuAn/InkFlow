@@ -1,18 +1,20 @@
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
+
 const config = window.readerConfig;
 const container = document.getElementById('viewer-container');
 const pageNumInput = document.getElementById('page-num-input');
 const pageCountSpan = document.getElementById('page-count');
 const zoomDisplay = document.getElementById('zoom-display');
 
+
 let pdfDoc = null,
     scale = 1.2,
     isProgrammaticScroll = false,
     saveTimeout = null,
-    isBookFinished = false; // Прапорець, щоб не відправляти запит багато разів
+    isBookFinished = false;
 
-// --- ЗБЕРЕЖЕННЯ ПРОГРЕСУ ---
+
 function saveProgress(page) {
     if (!pdfDoc || page < 1 || page > pdfDoc.numPages) return;
     
@@ -31,11 +33,11 @@ function saveProgress(page) {
     }).catch(err => console.error(err));
 }
 
-// --- АВТОМАТИЧНЕ ЗАВЕРШЕННЯ ---
+
 function markAsCompleted() {
-    if (isBookFinished) return; // Якщо вже позначено, виходимо
+    if (isBookFinished) return;
     
-    isBookFinished = true; // Ставимо прапорець
+    isBookFinished = true;
 
     fetch(config.finishUrl, {
         method: 'POST',
@@ -45,9 +47,9 @@ function markAsCompleted() {
     .then(r => r.json())
     .then(data => {
         if(data.status === 'success') {
-            // Використовуємо системний showToast з utils.js, якщо він доступний
+
             if (window.showToast) {
-                window.showToast('Вітаємо! Книгу прочитано 🏆', 'success');
+                window.showToast('Вітаємо! Книгу прочитано.', 'success');
             } else {
                 console.log('Книгу завершено!');
             }
@@ -55,24 +57,22 @@ function markAsCompleted() {
     })
     .catch(err => {
         console.error("Помилка завершення:", err);
-        isBookFinished = false; // Скидаємо прапорець, якщо помилка, щоб спробувати знову
+        isBookFinished = false;
     });
 }
 
-// --- ІНІЦІАЛІЗАЦІЯ ---
+
 async function initReader() {
     container.innerHTML = '';
     if(pageCountSpan) pageCountSpan.textContent = pdfDoc.numPages;
     if(zoomDisplay) zoomDisplay.textContent = `${Math.round(scale * 100)}%`;
 
-    // Створюємо сторінки
     for (let num = 1; num <= pdfDoc.numPages; num++) {
         const wrapper = document.createElement("div");
         wrapper.className = "page-wrapper";
         wrapper.id = `page-wrapper-${num}`;
         wrapper.setAttribute('data-page-number', num);
-        
-        // Гнучкий контейнер
+
         wrapper.style.minHeight = "600px"; 
         wrapper.style.position = "relative";
         wrapper.style.marginBottom = "20px";
@@ -89,14 +89,10 @@ async function initReader() {
         renderObserver.observe(wrapper);
     }
 
-    // МИ ПРИБРАЛИ КНОПКУ "ЗАВЕРШИТИ", ТЕПЕР ЦЕ ПРАЦЮЄ АВТОМАТИЧНО
-
-    // Додаємо відступ знизу, щоб було зручно дочитати останню сторінку
     const spacer = document.createElement('div');
     spacer.style.height = "100px";
     container.appendChild(spacer);
 
-    // Скрол до збереженої позиції
     if (config.startPage > 1) {
         await renderPage(config.startPage);
         setTimeout(() => {
@@ -107,7 +103,7 @@ async function initReader() {
     }
 }
 
-// --- РЕНДЕР СТОРІНКИ ---
+
 async function renderPage(num) {
     const canvas = document.getElementById(`page-${num}`);
     if (!canvas || canvas.getAttribute('data-rendered')) return;
@@ -136,6 +132,7 @@ async function renderPage(num) {
     } catch (e) { console.error(e); }
 }
 
+
 const renderObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -144,7 +141,7 @@ const renderObserver = new IntersectionObserver((entries) => {
     });
 }, { root: container, rootMargin: "1000px" });
 
-// --- ЛОГІКА СКРОЛУ ТА АВТО-ЗАВЕРШЕННЯ ---
+
 container.addEventListener('scroll', () => {
     if (isProgrammaticScroll || !pdfDoc) return;
 
@@ -160,19 +157,17 @@ container.addEventListener('scroll', () => {
         }
     }
 
-    // Оновлення сторінки в UI
     if (parseInt(pageNumInput.value) !== current) {
         pageNumInput.value = current;
         clearTimeout(saveTimeout);
         saveTimeout = setTimeout(() => saveProgress(current), 1000);
     }
 
-    // --- ПЕРЕВІРКА НА ЗАВЕРШЕННЯ ---
-    // Якщо поточна сторінка остання - зараховуємо прочитання
     if (current === pdfDoc.numPages) {
         markAsCompleted();
     }
 });
+
 
 function scrollToPage(num, save = true) {
     const target = document.getElementById(`page-wrapper-${num}`);
@@ -182,38 +177,40 @@ function scrollToPage(num, save = true) {
         
         if (pageNumInput) pageNumInput.value = num;
         if (save) saveProgress(num);
-        
-        // Якщо стрибаємо на останню сторінку програмно (наприклад, з історії), 
-        // теж можна зарахувати, або закоментувати цей рядок, якщо хочете лише при скролі
+
         if (num === pdfDoc.numPages) markAsCompleted();
 
         setTimeout(() => { isProgrammaticScroll = false; }, 500);
     }
 }
 
-// --- КНОПКИ ---
+
 document.getElementById('prev-btn').addEventListener('click', () => {
     let cur = parseInt(pageNumInput.value);
     if (cur > 1) scrollToPage(cur - 1);
 });
+
 document.getElementById('next-btn').addEventListener('click', () => {
     let cur = parseInt(pageNumInput.value);
     if (cur < pdfDoc.numPages) scrollToPage(cur + 1);
 });
+
 document.getElementById('zoom-in-btn').addEventListener('click', () => {
     scale = Math.min(scale + 0.2, 3.0);
     initReader();
 });
+
 document.getElementById('zoom-out-btn').addEventListener('click', () => {
     scale = Math.max(scale - 0.2, 0.5);
     initReader();
 });
+
 pageNumInput.addEventListener('change', (e) => {
     let val = Math.max(1, Math.min(parseInt(e.target.value), pdfDoc.numPages));
     scrollToPage(val);
 });
 
-// --- ЗАПУСК ---
+
 pdfjsLib.getDocument(config.url).promise.then(pdf => {
     pdfDoc = pdf;
     initReader();

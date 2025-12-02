@@ -1,5 +1,7 @@
-from app.core.db import get_db
 import mysql.connector
+
+from app.core.db import get_db
+
 
 def add_review(user_id, book_id, rating, comment):
     db = get_db()
@@ -15,10 +17,10 @@ def add_review(user_id, book_id, rating, comment):
     finally:
         cursor.close()
 
+
 def get_book_reviews(book_id):
     db = get_db()
     cursor = db.cursor(dictionary=True)
-
     query = """
         SELECT r.*, u.username, u.display_name, u.avatar_url 
         FROM reviews r

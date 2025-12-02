@@ -3,10 +3,17 @@ from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms import StringField, TextAreaField, IntegerField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Length, NumberRange
 
+
 class AddBookForm(FlaskForm):
-    title = StringField('Назва книги', validators=[DataRequired(), Length(max=255)])
+    title = StringField('Назва книги', validators=[
+        DataRequired(), 
+        Length(max=255)
+    ])
     
-    author = StringField('Автор', validators=[DataRequired(), Length(max=100)])
+    author = StringField('Автор', validators=[
+        DataRequired(), 
+        Length(max=100)
+    ])
 
     publication_year = IntegerField('Рік видання', validators=[
         DataRequired(message="Введіть рік"),

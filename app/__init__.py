@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from flask_login import LoginManager
+
 from .core.config import Config
 from .core import db, logger
 
@@ -12,23 +13,22 @@ from app.routes import reader
 from app.models.user import get_user_by_id
 from app.models.book import get_all_books
 
+
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 login_manager.login_message = "Будь ласка, увійдіть, щоб отримати доступ."
 login_manager.login_message_category = "info"
 
+
 def create_app():
-    app = Flask(__name__, 
-                template_folder='frontend/templates',
-                static_folder='frontend/static')
-    
+    app = Flask(__name__, template_folder='frontend/templates', static_folder='frontend/static')
+
     app.config.from_object(Config)
 
     logger.setup_logger(app)
     db.init_app(app)
-
     login_manager.init_app(app)
-    
+
     app.register_blueprint(auth.bp)
     app.register_blueprint(user.bp)
     app.register_blueprint(books.bp)
@@ -41,6 +41,9 @@ def create_app():
         only_free = request.args.get('free') == '1'
 
         books = get_all_books(genre=genre, only_free=only_free)
+
+        app.logger.info(f"Головна сторінка: перегляд {len(books)} книг. Фільтри: жанр={genre}, безкоштовні={only_free}")
+
         return render_template('index.html', books=books, current_genre=genre, current_free=only_free)
     
     @app.route('/about')
@@ -50,29 +53,20 @@ def create_app():
     @app.route('/faq')
     def faq():
         return render_template('faq.html')
-    
-    @app.route('/test-db')
-    def test_db():
-        try:
-            conn = db.get_db()
-            cursor = conn.cursor()
-            cursor.execute("SELECT DATABASE()")
-            data = cursor.fetchone()
-            return f"Успішне підключення до бази: {data[0]}"
-        except Exception as e:
-            app.logger.error(f"Помилка БД: {e}")
-            return f"Помилка: {e}"
-        
+
     def handle_404(e):
+        app.logger.warning(f"404 Error: {request.url}")
         return render_template('errors/404.html'), 404
 
     def handle_500(e):
+        app.logger.error(f"500 Error: {e}")
         return render_template('errors/500.html'), 500
 
     app.register_error_handler(404, handle_404)
     app.register_error_handler(500, handle_500)
 
     return app
+
 
 @login_manager.user_loader
 def load_user(user_id):

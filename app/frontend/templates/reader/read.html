@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-
 {% block title %}Читаю: {{ book.title }}{% endblock %}
 
 {% block navbar %}{% endblock %}
+{% block footer %}{% endblock %} 
 
 {% block content %}
-<style>main { padding: 0 !important; max-width: 100% !important; }</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reader.css') }}">
 
 <div class="reader-layout">
     
@@ -60,162 +60,6 @@
     </div>
 </div>
 
-<<style>
-    :root {
-        --reader-bg: #F5F1EA;
-        --reader-surface: #FFFFFF;
-        --reader-text: #2A2522;
-        --reader-border: rgba(0,0,0,0.05);
-        --reader-accent: #B58A59;
-        --reader-input-bg: #F0EEE6;
-    }
-    
-    [data-theme="dark"] {
-        --reader-bg: #1A1A1A;
-        --reader-surface: #242424;
-        --reader-text: #EDEDED;
-        --reader-border: #333;
-        --reader-accent: #D4A373;
-        --reader-input-bg: #333;
-    }
-
-    .reader-layout {
-        background-color: var(--reader-bg);
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        font-family: 'Inter', sans-serif;
-        color: var(--reader-text);
-        overflow: hidden;
-        transition: background-color 0.3s;
-    }
-
-    .reader-toolbar {
-        height: 64px;
-        background-color: var(--reader-surface);
-        border-bottom: 1px solid var(--reader-border);
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        align-items: center;
-        padding: 0 24px;
-        position: fixed;
-        top: 0; left: 0; right: 0;
-        z-index: 100;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-    }
-
-    .toolbar-left { display: flex; align-items: center; gap: 20px; }
-    .toolbar-center { display: flex; align-items: center; gap: 12px; justify-content: center; }
-    .toolbar-right { display: flex; align-items: center; justify-content: flex-end; gap: 15px; }
-
-    .back-link {
-        display: flex; align-items: center; gap: 8px;
-        text-decoration: none; color: var(--reader-text);
-        font-weight: 500; opacity: 0.8; transition: opacity 0.2s;
-    }
-    .back-link:hover { opacity: 1; }
-    
-    .book-title-header {
-        font-size: 0.9rem; color: var(--reader-text); opacity: 0.5;
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        max-width: 200px;
-    }
-
-    .nav-btn {
-        background: transparent; border: none; cursor: pointer;
-        color: var(--reader-text); padding: 6px; border-radius: 8px;
-        display: flex; align-items: center; justify-content: center;
-        transition: background 0.2s;
-    }
-    .nav-btn:hover { background-color: var(--reader-border); }
-
-    .page-display {
-        background-color: var(--reader-input-bg);
-        border-radius: 8px; padding: 4px 12px;
-        display: flex; align-items: center; gap: 6px;
-        font-weight: 600; font-size: 0.9rem;
-    }
-    
-    /* --- ВИПРАВЛЕНО СТИЛІ ДЛЯ ІНПУТУ --- */
-    .page-input {
-        width: 60px; /* Більше місця */
-        padding: 0;
-        background: transparent; 
-        border: none;
-        text-align: center; 
-        font-family: inherit;
-        font-size: 1.1rem; /* Трохи більший шрифт */
-        font-weight: 700; 
-        color: var(--reader-accent);
-        outline: none; 
-        -moz-appearance: textfield; /* Для Firefox */
-        appearance: textfield;
-    }
-    
-    /* Прибираємо стрілочки в Chrome/Safari/Edge/Opera */
-    .page-input::-webkit-outer-spin-button,
-    .page-input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-
-    .zoom-controls {
-        display: flex; align-items: center; gap: 4px;
-        background-color: var(--reader-input-bg);
-        border-radius: 8px; padding: 2px;
-    }
-    .zoom-value {
-        font-size: 0.85rem; font-weight: 600; min-width: 45px; text-align: center;
-    }
-
-    .viewer-container {
-        flex: 1;
-        margin-top: 64px;
-        padding: 40px 0;
-        overflow-y: auto;
-        text-align: center;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-        scroll-behavior: auto;
-    }
-
-    .page-wrapper {
-        display: flex; justify-content: center;
-        width: 100%; margin: 0;
-    }
-
-    canvas.book-page {
-        background-color: white;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        border-radius: 2px;
-        max-width: 95%;
-        height: auto !important;
-        display: block;
-    }
-
-    .floating-help {
-        position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-        background-color: var(--reader-surface);
-        padding: 8px 16px; border-radius: 20px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        font-size: 0.85rem; color: var(--reader-text);
-        display: flex; align-items: center; gap: 8px;
-        z-index: 90; pointer-events: none; opacity: 0.8;
-        border: 1px solid var(--reader-border);
-    }
-    
-    .key {
-        background-color: var(--reader-input-bg);
-        border: 1px solid var(--reader-border);
-        border-radius: 4px; padding: 2px 6px;
-        font-family: monospace; font-weight: 600;
-        color: var(--reader-text);
-    }
-</style>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
 <script>
@@ -227,36 +71,7 @@
         finishUrl: "{{ url_for('reader.finish_book') }}",
         profileUrl: "{{ url_for('user.profile') }}"
     };
-
-    // Тема
-    document.addEventListener('DOMContentLoaded', () => {
-        const btn = document.getElementById('reader-theme-toggle');
-        const body = document.body;
-        const sun = btn.querySelector('.sun-icon');
-        const moon = btn.querySelector('.moon-icon');
-        
-        const saved = localStorage.getItem('theme');
-        if(saved) body.setAttribute('data-theme', saved);
-        
-        const updateIcons = () => {
-            const isDark = body.getAttribute('data-theme') === 'dark';
-            sun.style.display = isDark ? 'block' : 'none';
-            moon.style.display = isDark ? 'none' : 'block';
-        };
-        updateIcons();
-
-        btn.addEventListener('click', () => {
-            const isDark = body.getAttribute('data-theme') === 'dark';
-            if(isDark) {
-                body.removeAttribute('data-theme');
-                localStorage.setItem('theme', 'light');
-            } else {
-                body.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-            }
-            updateIcons();
-        });
-    });
 </script>
+<script src="{{ url_for('static', filename='js/reader_init.js') }}"></script>
 <script src="{{ url_for('static', filename='js/reader.js') }}"></script>
 {% endblock %}

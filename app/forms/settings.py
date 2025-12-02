@@ -2,8 +2,11 @@ from flask_wtf import FlaskForm
 from wtforms import PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo
 
+
 class ChangePasswordForm(FlaskForm):
-    old_password = PasswordField('Старий пароль', validators=[DataRequired()])
+    old_password = PasswordField('Старий пароль', validators=[
+        DataRequired()
+    ])
     
     new_password = PasswordField('Новий пароль', validators=[
         DataRequired(), 
@@ -16,6 +19,7 @@ class ChangePasswordForm(FlaskForm):
     ])
     
     submit = SubmitField('Змінити пароль')
+
 
 class DeleteAccountForm(FlaskForm):
     submit = SubmitField('Видалити акаунт назавжди')

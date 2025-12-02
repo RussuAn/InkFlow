@@ -15,3 +15,11 @@ env/
 *.swp
 
 db_data/
+
+app/frontend/static/uploads/covers/*
+app/frontend/static/uploads/books/*
+app/frontend/static/uploads/avatars/*
+
+!app/frontend/static/uploads/covers/.gitkeep
+!app/frontend/static/uploads/books/.gitkeep
+!app/frontend/static/uploads/avatars/.gitkeep

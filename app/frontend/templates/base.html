@@ -13,7 +13,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
-<body>
+
+<body class="{% block body_class %}{% endblock %}">
 
     {% block navbar %}
     <nav class="navbar">
@@ -98,149 +99,61 @@
         </div>
     </main>
 
-    <footer style="margin-top: auto; padding: 4rem 0 2rem; border-top: 1px solid var(--border); background-color: var(--bg-card);">
+    {% block footer %}
+    <footer class="footer">
         <div class="container">
-            <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 4rem; margin-bottom: 3rem;">
+            <div class="footer-grid">
                 
                 <div>
-                    <a href="{{ url_for('index') }}" style="font-family: var(--font-head); font-size: 1.8rem; font-weight: 700; color: var(--text-main); text-decoration: none; display: block; margin-bottom: 1rem;">
-                        InkFlow.
+                    <a href="{{ url_for('index') }}" class="footer-logo">
+                        InkFlow
                     </a>
-                    <p style="color: var(--text-muted); max-width: 300px; line-height: 1.6;">
+                    <p class="footer-desc">
                         Твій простір для читання, розвитку та натхнення. Читайте будь-де, будь-коли.
                     </p>
                 </div>
 
                 <div>
-                    <h4 style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 1.2rem;">Проєкт</h4>
-                    <div style="display: flex; flex-direction: column; gap: 0.8rem;">
-                        <a href="{{ url_for('about') }}" style="color: var(--text-muted); transition: color 0.2s; font-size: 0.95rem;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">Про нас</a>
-                        <a href="{{ url_for('faq') }}" style="color: var(--text-muted); transition: color 0.2s; font-size: 0.95rem;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">Часті питання (FAQ)</a>
-                        <a href="{{ url_for('index') }}" style="color: var(--text-muted); transition: color 0.2s; font-size: 0.95rem;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">Каталог книг</a>
+                    <h4 class="footer-header">Проєкт</h4>
+                    <div class="footer-links">
+                        <a href="{{ url_for('about') }}" class="footer-link">Про нас</a>
+                        <a href="{{ url_for('faq') }}" class="footer-link">Часті питання (FAQ)</a>
+                        <a href="{{ url_for('index') }}" class="footer-link">Каталог книг</a>
                     </div>
                 </div>
 
                 <div>
-                    <h4 style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 1.2rem;">Допомога</h4>
-                    <div style="display: flex; flex-direction: column; gap: 0.8rem;">
-                        <a href="{{ url_for('user.contact') }}" style="color: var(--text-muted); transition: color 0.2s; font-size: 0.95rem;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">Зв'язатися з нами</a>
-                        <span style="color: var(--text-muted); font-size: 0.95rem; opacity: 0.5;">Політика конфіденційності</span>
+                    <h4 class="footer-header">Допомога</h4>
+                    <div class="footer-links">
+                        <a href="{{ url_for('user.contact') }}" class="footer-link">Зв'язатися з нами</a>
+                        <span class="footer-link" style="opacity: 0.5; cursor: default;">Політика конфіденційності</span>
                     </div>
                 </div>
             </div>
 
-            <div style="text-align: center; padding-top: 2rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem;">
-                &copy; 2025 InkFlow. Курсова робота. Anastasiia Russu.
+            <div class="footer-copyright">
+                &copy; 2025 InkFlow. Coursework. Anastasiia Russu.
             </div>
         </div>
     </footer>
+    {% endblock %}
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
-                        window.showToast('{{ message | escape }}', '{{ category }}');
+                        if (window.showToast) {
+                            window.showToast('{{ message | escape }}', '{{ category }}');
+                        }
                     {% endfor %}
                 {% endif %}
             {% endwith %}
-
-            const body = document.body;
-            const moonIcon = document.getElementById('moon-icon');
-            const sunIcon = document.getElementById('sun-icon');
-            const sunRays = document.getElementById('sun-rays');
-
-            function updateThemeIcon() {
-                const isDark = body.hasAttribute('data-theme');
-                if (!moonIcon || !sunIcon) return; 
-
-                if (isDark) {
-                    moonIcon.style.display = 'none';
-                    sunIcon.style.display = 'block';
-                    sunRays.style.display = 'block';
-                } else {
-                    moonIcon.style.display = 'block';
-                    sunIcon.style.display = 'none';
-                    sunRays.style.display = 'none';
-                }
-            }
-            
-            const observer = new MutationObserver(updateThemeIcon);
-            observer.observe(body, { attributes: true, attributeFilter: ['data-theme'] });
-            updateThemeIcon();
         });
     </script>
     
     <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
     <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
     <script src="{{ url_for('static', filename='js/search.js') }}"></script>
-
-    <style>
-        .user-dropdown-content {
-            background-color: var(--bg-card);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            border: 1px solid var(--border);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-            display: block !important;
-            pointer-events: none;
-            position: absolute;
-            right: 0;
-            min-width: 220px;
-            padding: 0.75rem;
-            border-radius: 16px;
-            top: calc(100% + 10px);
-        }
-
-        .user-dropdown-content.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-        
-        .user-dropdown-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            border-radius: 8px;
-            color: var(--text-main);
-            text-decoration: none;
-            transition: background-color 0.2s;
-            font-size: 0.95rem;
-            font-weight: 500;
-            margin-bottom: 2px;
-        }
-        
-        .user-dropdown-item:hover { background-color: var(--bg-body); }
-        .user-dropdown-item.destructive { color: #EF4444; }
-        .user-dropdown-item.destructive:hover { background-color: rgba(239, 68, 68, 0.1); }
-        
-        /* --- ОНОВЛЕНО: Стилі для кнопок навігації (як у кнопки "Увійти") --- */
-        .nav-btn-styled {
-            display: flex; align-items: center; justify-content: center;
-            background-color: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 14px; color: var(--text-main);
-            cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow);
-        }
-        .nav-btn-styled:hover { 
-            border-color: var(--accent); 
-            transform: translateY(-2px); 
-            box-shadow: var(--shadow-elevated); 
-        }
-
-        /* Модифікатор для квадратних іконок */
-        .nav-btn-styled.icon-only {
-            width: 44px; height: 44px; padding: 0;
-        }
-
-        /* Модифікатор для текстової кнопки */
-        .nav-btn-styled.text-btn {
-            padding: 10px 24px; font-weight: 600; font-size: 0.95rem; text-decoration: none;
-        }
-    </style>
 </body>
 </html>

@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block title %}Налаштування | InkFlow{% endblock %}
 
 {% block content %}
@@ -20,7 +19,7 @@
             {{ pass_form.hidden_tag() }}
             
             <div style="margin-bottom: 1.5rem;">
-                {{ pass_form.old_password.label(style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-muted);") }}
+                {{ pass_form.old_password.label(class="settings-input-label") }}
                 <div style="position: relative;">
                     {{ pass_form.old_password(id="old-password-input", style="width: 100%; padding-right: 48px;") }}
                     <button type="button" onclick="togglePassword('old-password-input', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); padding: 8px; background: none; border: none; cursor: pointer; color: var(--text-muted);">
@@ -30,7 +29,7 @@
             </div>
             
             <div style="margin-bottom: 1.5rem;">
-                {{ pass_form.new_password.label(style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-muted);") }}
+                {{ pass_form.new_password.label(class="settings-input-label") }}
                 <div style="position: relative;">
                     {{ pass_form.new_password(id="new-password-input", style="width: 100%; padding-right: 48px;") }}
                     <button type="button" onclick="togglePassword('new-password-input', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); padding: 8px; background: none; border: none; cursor: pointer; color: var(--text-muted);">
@@ -40,7 +39,7 @@
             </div>
             
             <div style="margin-bottom: 2rem;">
-                {{ pass_form.confirm_password.label(style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-muted);") }}
+                {{ pass_form.confirm_password.label(class="settings-input-label") }}
                 <div style="position: relative;">
                     {{ pass_form.confirm_password(id="confirm-password-input", style="width: 100%; padding-right: 48px;") }}
                     <button type="button" onclick="togglePassword('confirm-password-input', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); padding: 8px; background: none; border: none; cursor: pointer; color: var(--text-muted);">
@@ -69,14 +68,4 @@
         </form>
     </div>
 </div>
-
-<style>
-    .input-label {
-        color: var(--text-muted); 
-        font-weight: 500;
-        font-size: 0.9rem;
-        display: block; 
-        margin-bottom: 0.5rem;
-    }
-</style>
 {% endblock %}

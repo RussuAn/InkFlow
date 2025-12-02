@@ -1,8 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
     const resultsContainer = document.getElementById('search-results');
-    
-    // Якщо елементів немає (наприклад, на сторінці логіну), просто виходимо
+
     if (!searchInput || !resultsContainer) return;
 
     let debounceTimer;

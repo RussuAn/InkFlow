@@ -17,4 +17,4 @@ def close_db(e=None):
         db.close()
 
 def init_app(app):
-    app.teardown_appcontext(close_db)
+    app.teardown_appcontext(close_db) 

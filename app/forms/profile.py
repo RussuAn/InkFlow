@@ -30,4 +30,4 @@ class EditProfileForm(FlaskForm):
         if username.data != current_user.username:
             user = get_user_by_username(username.data)
             if user:
-                raise ValidationError('Цей нікнейм вже зайнятий.')
+                raise ValidationError('Цей нікнейм вже зайнятий.') 

@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
+
 function initNavbarScroll() {
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
@@ -22,6 +23,7 @@ function initNavbarScroll() {
     window.addEventListener('scroll', handleScroll);
     handleScroll();
 }
+
 
 function initUserMenu() {
     const trigger = document.getElementById('user-menu-btn'); 
@@ -49,6 +51,7 @@ function initUserMenu() {
         });
     }
 }
+
 
 function initTabs() {
     const triggers = document.querySelectorAll('.tab-trigger');
@@ -78,6 +81,7 @@ function initTabs() {
     });
 }
 
+
 function initPasswordToggle() {
     window.togglePassword = function(inputId, btn) {
         const input = document.getElementById(inputId);
@@ -93,6 +97,7 @@ function initPasswordToggle() {
     };
 }
 
+
 window.updateFileName = function(input, textId) {
     const textEl = document.getElementById(textId);
     if (input.files && input.files.length > 0) {
@@ -101,6 +106,7 @@ window.updateFileName = function(input, textId) {
         textEl.style.fontWeight = "600";
     }
 };
+
 
 window.showToast = function(message, type = 'info') {
     let container = document.getElementById('flash-messages-container');

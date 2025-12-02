@@ -48,47 +48,5 @@
     </div>
 </div>
 
-<style>
-    .faq-item {
-        padding: 0; margin-bottom: 1rem; 
-        border-radius: 16px; overflow: hidden;
-        border: 1px solid var(--border);
-        transition: border-color 0.2s;
-    }
-    .faq-item:hover { border-color: var(--accent); }
-
-    .faq-question {
-        width: 100%; text-align: left; padding: 1.5rem;
-        background: none; border: none; cursor: pointer;
-        display: flex; justify-content: space-between; align-items: center;
-        font-size: 1.1rem; font-weight: 600; color: var(--text-main);
-        transition: background 0.2s;
-    }
-    .faq-question:hover { background-color: var(--bg-body); }
-    
-    .faq-question .icon {
-        color: var(--text-muted);
-        transition: transform 0.3s ease, color 0.3s ease;
-    }
-    
-    .faq-question.active .icon {
-        transform: rotate(180deg);
-        color: var(--accent);
-    }
-    
-    .faq-answer {
-        padding: 0 1.5rem; max-height: 0; overflow: hidden;
-        transition: max-height 0.3s ease, padding 0.3s ease;
-        color: var(--text-muted); line-height: 1.6;
-    }
-    .faq-answer.show { padding-bottom: 1.5rem; max-height: 200px; }
-</style>
-
-<script>
-    function toggleFaq(button) {
-        const answer = button.nextElementSibling;
-        button.classList.toggle('active');
-        answer.classList.toggle('show');
-    }
-</script>
+<script src="{{ url_for('static', filename='js/faq.js') }}"></script>
 {% endblock %}

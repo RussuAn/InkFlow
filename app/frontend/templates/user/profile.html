@@ -1,74 +1,73 @@
 {% extends "base.html" %}
-
 {% block title %}{{ user.display_name }} | Профіль{% endblock %}
 
 {% block content %}
-<div style="max-width: 1400px; margin: 0 auto; padding: 3rem 0;">
+<div class="profile-page-wrapper">
 
-    <h1 style="font-size: 2.5rem; margin-bottom: 2rem; font-family: var(--font-head);">
-        Мій Профіль
+    <h1 class="profile-title">
+        Мій профіль
     </h1>
 
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;">
+    <div class="profile-grid">
         
-        <div class="profile-card card" style="grid-column: span 1; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 2rem; border-radius: 20px;">
-            <div class="avatar-wrapper" style="width: 120px; height: 120px; margin: 0 auto 1.5rem; overflow: hidden; border-radius: 50%; box-shadow: var(--shadow-elevated);">
+        <div class="card profile-info-card">
+            <div class="profile-avatar-wrapper">
                 {% if user.avatar_url %}
-                <img src="{{ url_for('static', filename='uploads/avatars/' + user.avatar_url) }}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                <img src="{{ url_for('static', filename='uploads/avatars/' + user.avatar_url) }}" alt="Avatar" class="profile-avatar-img">
                 {% else %}
-                <div style="width: 100%; height: 100%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold;">
+                <div class="profile-avatar-placeholder">
                     {{ user.username[0].upper() }}
                 </div>
                 {% endif %}
             </div>
-            <h2 style="font-size: 1.8rem; font-weight: 600; margin-bottom: 0.25rem; line-height: 1.2;">{{ user.display_name }}</h2>
-            <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 1.5rem;">@{{ user.username }}</p>
-            <p style="font-size: 0.95rem; line-height: 1.5; color: var(--text-muted); margin-bottom: 1.5rem;">
+            <h2 class="profile-name">{{ user.display_name }}</h2>
+            <p class="profile-username">@{{ user.username }}</p>
+            <p class="profile-bio">
                 {{ user.bio or 'Користувач ще не додав біографію.' }}
             </p>
             <a href="{{ url_for('user.edit_profile') }}" class="btn-primary" style="padding: 10px 20px; font-weight: 500;">Редагувати</a>
         </div>
         
-        <div class="stat-card card" style="grid-column: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 20px;">
-            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent); margin-bottom: 0.5rem; transform: scaleX(-1);">
+        <div class="card stat-card wide">
+            <svg class="stat-icon flipped" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a5.5 5.5 0 1 1-11 0c0-.397.035-.78.101-1.152-.436.225-.833.524-1.18.887a2.5 2.5 0 0 0 1.579 4.265z"/>
             </svg>
-            <div style="font-family: var(--font-head); font-size: 3rem; font-weight: 600; color: var(--accent); margin-bottom: 0.5rem;">
+            <div class="stat-value accent">
                 {{ user.streak_count }}
             </div>
-            <p style="color: var(--text-muted); font-size: 1.125rem; margin-bottom: 1.5rem;">Днів поспіль</p>
-            <div style="display: flex; gap: 4px;">
+            <p class="stat-label">Днів поспіль</p>
+            <div class="streak-dots">
                 {% for i in range(7) %}
-                    <div style="width: 20px; height: 20px; border-radius: 4px; background-color: var(--accent); opacity: {% if loop.index0 < (user.streak_count|default(0) % 7 or 1) %}1{% else %}0.3{% endif %};"></div>
+                    <div class="streak-dot" style="opacity: {% if loop.index0 < (user.streak_count|default(0) % 7 or 1) %}1{% else %}0.3{% endif %};"></div>
                 {% endfor %}
             </div>
         </div>
         
-        <div class="stat-card card" style="grid-column: span 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 20px;">
-            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#B58A59" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 0.5rem;"><path d="M6 16V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2Z"/><path d="M15 6h-6"/><path d="M8 18c-3 0-5 2-5 4"/></svg>
-            <div style="font-family: var(--font-head); font-size: 3rem; font-weight: 600; margin-bottom: 0.5rem;">{{ user.balance or 0 }}</div>
-            <p style="color: var(--text-muted); font-size: 1.125rem; margin-bottom: 1.5rem;">Монет у гаманці</p>
+        <div class="card stat-card narrow">
+            <svg class="stat-icon balance" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2Z"/><path d="M15 6h-6"/><path d="M8 18c-3 0-5 2-5 4"/></svg>
+            <div class="stat-value">{{ user.balance or 0 }}</div>
+            <p class="stat-label">Монет у гаманці</p>
             <a href="{{ url_for('user.topup') }}" class="btn-primary" style="padding: 10px 25px; font-weight: 500;">Поповнити</a>
         </div>
 
-        <div class="reading-now-card card" style="grid-column: span 2; padding: 2rem; border-radius: 20px; max-height: 400px; overflow-y: auto;">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem;">
+        <div class="card reading-card">
+            <div class="card-header">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B58A59" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2Z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7Z"/></svg>
-                <h3 style="font-size: 1.5rem; margin: 0; font-family: var(--font-head);">Читаю зараз</h3>
+                <h3 class="card-title">Читаю зараз</h3>
             </div>
             
             {% if books_reading %}
-                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div class="reading-list">
                 {% for book in books_reading %}
-                    <div style="display: flex; gap: 1.5rem; align-items: flex-start; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
-                        <a href="{{ url_for('books.book_detail', book_id=book.id) }}" style="flex-shrink: 0; width: 80px; aspect-ratio: 2/3; border-radius: 8px; overflow: hidden; box-shadow: var(--shadow);">
+                    <div class="reading-item">
+                        <a href="{{ url_for('books.book_detail', book_id=book.id) }}" class="reading-cover-wrapper">
                             <img src="{{ url_for('static', filename='uploads/covers/' + book.cover_image) }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover;">
                         </a>
-                        <div style="flex-grow: 1;">
+                        <div class="reading-info">
                             <a href="{{ url_for('books.book_detail', book_id=book.id) }}" style="text-decoration: none; color: inherit;">
-                                <p style="font-family: var(--font-head); font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">{{ book.title }}</p>
+                                <p class="reading-book-title">{{ book.title }}</p>
                             </a>
-                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.75rem;">{{ book.author }}</p>
+                            <p class="reading-book-author">{{ book.author }}</p>
                             
                             <a href="{{ url_for('reader.read_book', book_id=book.id) }}" class="btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;">
                                 Продовжити читання
@@ -78,89 +77,89 @@
                 {% endfor %}
                 </div>
             {% else %}
-                <div style="color: var(--text-muted); padding: 1rem 0;">
+                <div class="empty-state">
                     <p>Ця полиця порожня.</p>
                 </div>
             {% endif %}
         </div>
 
-        <div class="completed-books-card card" style="grid-column: span 2; padding: 2rem; border-radius: 20px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 1.5rem;">
+        <div class="card completed-card">
+            <div class="card-header">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B58A59" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                    <h3 style="font-size: 1.5rem; margin: 0; font-family: var(--font-head);">Прочитано</h3>
+                    <h3 class="card-title">Прочитано</h3>
                 </div>
-                <span style="color: var(--text-main); background: var(--border); padding: 4px 10px; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">{{ books_completed|length }} книг</span>
+                <span class="count-badge">{{ books_completed|length }} книг</span>
             </div>
             
             {% if books_completed %}
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 10px;">
+                <div class="mini-grid">
                     {% for book in books_completed %}
-                        <a href="{{ url_for('books.book_detail', book_id=book.id) }}" style="text-decoration: none; color: inherit; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
-                            <div style="aspect-ratio: 3/4; overflow: hidden; border-radius: 8px; box-shadow: var(--shadow);">
+                        <a href="{{ url_for('books.book_detail', book_id=book.id) }}" style="text-decoration: none; color: inherit;">
+                            <div class="mini-cover">
                                 <img src="{{ url_for('static', filename='uploads/covers/' + book.cover_image) }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover;">
                             </div>
                         </a>
                     {% endfor %}
                 </div>
             {% else %}
-                 <div style="color: var(--text-muted); padding: 1rem 0;">
+                 <div class="empty-state">
                     <p>Тут відображатимуться ваші завершені книги.</p>
                 </div>
             {% endif %}
         </div>
 
-        <div class="card" style="grid-column: 1 / -1; padding: 2rem; border-radius: 20px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+        <div class="card full-width-card">
+            <div class="card-header with-border">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B58A59" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-                    <h3 style="font-size: 1.5rem; margin: 0; font-family: var(--font-head);">Прочитати пізніше</h3>
+                    <h3 class="card-title">Прочитати пізніше</h3>
                 </div>
-                <span style="color: var(--text-main); background: var(--border); padding: 4px 10px; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">{{ books_planned|length }} книг</span>
+                <span class="count-badge">{{ books_planned|length }} книг</span>
             </div>
             {% if books_planned %}
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1.5rem;">
+                <div class="books-grid">
                     {% for book in books_planned %}
-                        <a href="{{ url_for('books.book_detail', book_id=book.id) }}" style="text-decoration: none; color: inherit; display: block; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-                            <div style="aspect-ratio: 3/4; overflow: hidden; border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 0.5rem;">
+                        <a href="{{ url_for('books.book_detail', book_id=book.id) }}" class="grid-book-item">
+                            <div class="grid-cover-wrapper">
                                 <img src="{{ url_for('static', filename='uploads/covers/' + book.cover_image) }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover;">
                             </div>
-                            <p style="font-size: 0.9rem; font-weight: 600; line-height: 1.2; text-align: center; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ book.title }}</p>
+                            <p class="grid-book-title">{{ book.title }}</p>
                         </a>
                     {% endfor %}
                 </div>
             {% else %}
-                 <div style="color: var(--text-muted); padding: 1rem 0;"><p>Ви ще не запланували жодної книги.</p></div>
+                 <div class="empty-state"><p>Ви ще не запланували жодної книги.</p></div>
             {% endif %}
         </div>
 
-        <div class="card" style="grid-column: 1 / -1; padding: 2rem; border-radius: 20px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+        <div class="card full-width-card">
+            <div class="card-header with-border">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B58A59" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-                    <h3 style="font-size: 1.5rem; margin: 0; font-family: var(--font-head);">Мої подарунки</h3>
+                    <h3 class="card-title">Мої подарунки</h3>
                 </div>
-                <span style="color: var(--text-main); background: var(--border); padding: 4px 10px; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">
+                <span class="count-badge">
                     {{ books_gifted|length }} книг
                 </span>
             </div>
             
             {% if books_gifted %}
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1.5rem;">
+                <div class="books-grid">
                     {% for book in books_gifted %}
-                        <a href="{{ url_for('books.book_detail', book_id=book.id) }}" style="text-decoration: none; color: inherit; display: block; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-                            <div style="aspect-ratio: 3/4; overflow: hidden; border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 0.5rem; position: relative;">
+                        <a href="{{ url_for('books.book_detail', book_id=book.id) }}" class="grid-book-item">
+                            <div class="grid-cover-wrapper">
                                 <img src="{{ url_for('static', filename='uploads/covers/' + book.cover_image) }}" alt="{{ book.title }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                <div style="position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.9); padding: 4px; border-radius: 6px; color: var(--accent); box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                <div class="gift-badge">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
                                 </div>
                             </div>
-                            <p style="font-size: 0.9rem; font-weight: 600; line-height: 1.2; text-align: center; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ book.title }}</p>
+                            <p class="grid-book-title">{{ book.title }}</p>
                         </a>
                     {% endfor %}
                 </div>
             {% else %}
-                 <div style="color: var(--text-muted); padding: 1rem 0;"><p>Вам ще ніхто не дарував книг.</p></div>
+                 <div class="empty-state"><p>Вам ще ніхто не дарував книг.</p></div>
             {% endif %}
         </div>
         

@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block title %}
     {% if search_query %}Результати пошуку: {{ search_query }}{% else %}Бібліотека InkFlow{% endif %}
 {% endblock %}
@@ -143,71 +142,6 @@
         </div>
     </div>
 
-<style>
-    .book-card:hover {
-        transform: translateY(-8px);
-        box-shadow: var(--shadow-elevated);
-    }
-    .book-card:hover img {
-        transform: scale(1.05);
-    }
-
-    /* Стилі для меню фільтрів */
-    .filter-menu {
-        position: absolute;
-        top: calc(100% + 10px);
-        right: 0;
-        background: var(--bg-card);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        box-shadow: var(--shadow-elevated);
-        min-width: 220px;
-        z-index: 100;
-        padding: 8px;
-        display: none;
-    }
-    .filter-menu.active {
-        display: block;
-    }
-    .filter-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 12px;
-        border-radius: 8px;
-        color: var(--text-main);
-        text-decoration: none;
-        font-size: 0.95rem;
-        transition: background 0.2s;
-    }
-    .filter-item:hover {
-        background: var(--bg-body);
-    }
-    .filter-item.active {
-        background: var(--input-bg);
-        color: var(--accent);
-        font-weight: 600;
-    }
-</style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const filterBtn = document.getElementById('filter-btn');
-        const filterMenu = document.getElementById('filter-menu');
-
-        if (filterBtn && filterMenu) {
-            filterBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                filterMenu.classList.toggle('active');
-            });
-
-            document.addEventListener('click', (e) => {
-                if (!filterMenu.contains(e.target) && !filterBtn.contains(e.target)) {
-                    filterMenu.classList.remove('active');
-                }
-            });
-        }
-    });
-</script>
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
 
 {% endblock %}

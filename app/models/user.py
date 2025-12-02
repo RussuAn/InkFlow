@@ -1,11 +1,13 @@
+import mysql.connector
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from app.core.db import get_db
-import mysql.connector
 from datetime import date, timedelta
 
+from app.core.db import get_db
+
+
 class User(UserMixin):
-    def __init__(self, id, username, email, password_hash, role='user', avatar_url=None, balance=0, bio=None, display_name=None, streak_count=0, created_at=None):
+    def __init__(self, id, username, email, password_hash, role = 'user', avatar_url=None, balance = 0, bio = None, display_name = None, streak_count = 0, created_at = None):
         self.id = id
         self.username = username
         self.email = email
@@ -21,6 +23,7 @@ class User(UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
     
+
 def create_user(username, email, password, display_name=None):
     db = get_db()
     cursor = db.cursor()
@@ -67,6 +70,7 @@ def get_user_by_email(email):
         )
     return None
 
+
 def get_user_by_id(user_id):
     db = get_db()
     cursor = db.cursor(dictionary=True)
@@ -89,6 +93,7 @@ def get_user_by_id(user_id):
             created_at=user_data.get('created_at')
         )
     return None
+
 
 def get_user_by_username(username):
     db = get_db()
@@ -113,6 +118,7 @@ def get_user_by_username(username):
         )
     return None
 
+
 def update_user_profile(user_id, username, display_name, bio, avatar_url=None):
     db = get_db()
     cursor = db.cursor()
@@ -130,6 +136,7 @@ def update_user_profile(user_id, username, display_name, bio, avatar_url=None):
         return False
     finally:
         cursor.close()
+
 
 def update_user_streak(user_id):
     db = get_db()
@@ -163,6 +170,7 @@ def update_user_streak(user_id):
     
     return new_streak
 
+
 def update_password(user_id, new_password):
     db = get_db()
     cursor = db.cursor()
@@ -176,6 +184,7 @@ def update_password(user_id, new_password):
         return False
     finally:
         cursor.close()
+
 
 def delete_user(user_id):
     db = get_db()

@@ -1,5 +1,7 @@
+/* Глобальне скидання */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Основні стилі тіла */
 body {
     background-color: var(--bg-body);
     color: var(--text-main);
@@ -8,18 +10,22 @@ body {
     line-height: 1.6;
 }
 
+/* Типографіка */
 h1, h2, h3, h4, h5, h6 { 
     font-family: var(--font-head); 
     font-weight: 600;
     line-height: 1.2; 
     margin: 0;
 }
+
 h1 { font-size: 3.5rem; letter-spacing: -0.02em; }
 h2 { font-size: 2.5rem; letter-spacing: -0.01em; }
 h3 { font-size: 1.75rem; }
 
+/* Посилання */
 a { text-decoration: none; color: inherit; }
 
+/* Елементи форм */
 input:not([type="checkbox"]):not([type="radio"]), textarea, select {
     font-family: var(--font-body);
     background-color: var(--input-bg);
@@ -29,6 +35,8 @@ input:not([type="checkbox"]):not([type="radio"]), textarea, select {
     transition: all 0.2s;
     color: var(--text-main);
 }
+
+/* Стан фокусу */
 input:not([type="checkbox"]):not([type="radio"]):focus, textarea:focus, select:focus {
     border-color: var(--accent);
     outline: none;

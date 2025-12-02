@@ -41,7 +41,7 @@ class RegistrationForm(FlaskForm):
         user = get_user_by_email(email.data)
         if user:
             raise ValidationError('Цей email вже зареєстрований.')
-        
+
 
 class LoginForm(FlaskForm):
     email_or_username = StringField('Нікнейм або Email', validators=[

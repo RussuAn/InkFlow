@@ -1,5 +1,7 @@
-from app.core.db import get_db
 import mysql.connector
+
+from app.core.db import get_db
+
 
 def create_message(user_id, subject, message):
     db = get_db()

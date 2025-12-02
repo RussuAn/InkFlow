@@ -35,4 +35,4 @@ def setup_logger(app: Flask):
 
     app.logger.setLevel(logging.DEBUG if app.debug else logging.INFO)
 
-    app.logger.info('InkFlow Logger успішно запущено!')
+    app.logger.info('InkFlow Logger успішно запущено!') 

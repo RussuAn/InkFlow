@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block title %}Редагувати профіль | InkFlow{% endblock %}
 
 {% block content %}
@@ -100,88 +99,5 @@
     </form>
 </div>
 
-<style>
-    .input-label { color: var(--text-main); font-weight: 600; font-size: 0.95rem; display: block; margin-bottom: 0.5rem; }
-    .form-hint { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem; }
-    .form-error { color: #DC2626; font-size: 0.85rem; margin-top: 0.25rem; display: block; }
-
-    .form-input {
-        width: 100%;
-        padding: 10px 15px;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        background: var(--bg-input);
-        color: var(--text-main);
-        transition: border-color 0.2s;
-    }
-    .form-input:focus {
-        border-color: var(--accent);
-        outline: none;
-        box-shadow: 0 0 0 2px var(--accent-light);
-    }
-    .form-input-disabled {
-        width: 100%;
-        padding: 10px 15px;
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        background: var(--bg-secondary);
-        color: var(--text-muted);
-        cursor: not-allowed;
-    }
-</style>
-
-<script>
-    function updateBioCounter(textarea) {
-        const counter = document.getElementById('bio-counter');
-        const maxLength = 500;
-        const currentLength = textarea.value.length;
-        counter.textContent = `${currentLength} / ${maxLength} символів`;
-        
-        if (currentLength > maxLength) {
-            counter.style.color = '#DC2626'; 
-        } else {
-            counter.style.color = 'var(--text-muted)';
-        }
-    }
-
-    function previewAvatar(input) {
-        let preview = document.getElementById('avatar-preview');
-        const fileNameDisplay = document.getElementById('avatar-file-name');
-        const wrapper = preview.parentNode;
-
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                if (preview.tagName === 'DIV') {
-                    const img = document.createElement('img');
-                    img.id = 'avatar-preview';
-                    img.src = e.target.result;
-                    img.alt = 'Avatar Preview';
-                    img.style.cssText = 'width: 100%; height: 100%; object-fit: cover; display: block;';
-                    wrapper.replaceChild(img, preview);
-                    preview = img;
-                } else {
-                    preview.src = e.target.result;
-                }
-            }
-            
-            reader.readAsDataURL(input.files[0]);
-            fileNameDisplay.textContent = `Новий файл: ${input.files[0].name}`;
-            fileNameDisplay.style.color = 'var(--text-main)';
-
-        } else {
-            fileNameDisplay.textContent = 'Виберіть новий файл';
-            fileNameDisplay.style.color = 'var(--text-muted)';
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const bioTextarea = document.getElementById('bio');
-        if (bioTextarea) {
-             updateBioCounter(bioTextarea);
-        }
-    });
-
-</script>
+<script src="{{ url_for('static', filename='js/edit_profile.js') }}"></script>
 {% endblock %}
