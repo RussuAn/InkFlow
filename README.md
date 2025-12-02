@@ -43,7 +43,7 @@
 
 ### Крок 1: Клонування репозиторію
 ```bash
-git clone [https://github.com/RussuAn/InkFlow.git](https://github.com/RussuAn/InkFlow.git)
+git clone [https://github.com/RussuAn/InkFlow.git]
 cd InkFlow
 ```
 
@@ -62,8 +62,7 @@ MYSQL_DB=inkflow_db
 ```bash
 docker-compose up --build
 ```
-Після успішного запуску веб-сервер буде доступний за адресою: http://localhost:5000
-А також phpMyAdmin для керування базою даних: http://localhost:8080
+Після успішного запуску веб-сервер буде доступний за адресою: http://localhost:5000. А також phpMyAdmin для керування базою даних: http://localhost:8080
 
 ---
 
