@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}FAQ | InkFlow{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 4rem auto;">
+    <h1 style="text-align: center; margin-bottom: 3rem; font-family: var(--font-head); color: var(--text-main);">Часті запитання</h1>
+
+    <div class="faq-container">
+        <div class="faq-item card">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <span>Як поповнити баланс?</span>
+                <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+                <p>Перейдіть у свій профіль та натисніть кнопку "Поповнити" під балансом. Виберіть суму та підтвердіть дію. У демо-режимі кошти не списуються.</p>
+            </div>
+        </div>
+
+        <div class="faq-item card">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <span>Як працює читалка?</span>
+                <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+                <p>Система автоматично запам'ятовує сторінку, на якій ви зупинилися. Просто відкрийте книгу знову, і ви продовжите з того ж місця.</p>
+            </div>
+        </div>
+
+        <div class="faq-item card">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <span>Як подарувати книгу?</span>
+                <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+                <p>На сторінці платної книги натисніть іконку подарунка 🎁. Введіть нікнейм користувача, і після оплати книга з'явиться у його бібліотеці.</p>
+            </div>
+        </div>
+
+        <div class="faq-item card">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <span>Чи можу я завантажити книгу?</span>
+                <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="faq-answer">
+                <p>Так! Якщо ви придбали книгу або вона є безкоштовною, на сторінці книги з'явиться кнопка "Завантажити файл".</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .faq-item {
+        padding: 0; margin-bottom: 1rem; 
+        border-radius: 16px; overflow: hidden;
+        border: 1px solid var(--border);
+        transition: border-color 0.2s;
+    }
+    .faq-item:hover { border-color: var(--accent); }
+
+    .faq-question {
+        width: 100%; text-align: left; padding: 1.5rem;
+        background: none; border: none; cursor: pointer;
+        display: flex; justify-content: space-between; align-items: center;
+        font-size: 1.1rem; font-weight: 600; color: var(--text-main);
+        transition: background 0.2s;
+    }
+    .faq-question:hover { background-color: var(--bg-body); }
+    
+    .faq-question .icon {
+        color: var(--text-muted);
+        transition: transform 0.3s ease, color 0.3s ease;
+    }
+    
+    .faq-question.active .icon {
+        transform: rotate(180deg);
+        color: var(--accent);
+    }
+    
+    .faq-answer {
+        padding: 0 1.5rem; max-height: 0; overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+        color: var(--text-muted); line-height: 1.6;
+    }
+    .faq-answer.show { padding-bottom: 1.5rem; max-height: 200px; }
+</style>
+
+<script>
+    function toggleFaq(button) {
+        const answer = button.nextElementSibling;
+        button.classList.toggle('active');
+        answer.classList.toggle('show');
+    }
+</script>
+{% endblock %}

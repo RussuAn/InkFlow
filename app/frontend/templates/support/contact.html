@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Зв'язок з адміністрацією | InkFlow{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 4rem auto;">
+    <h1 style="text-align: center; margin-bottom: 1rem; font-family: var(--font-head);">Зворотній зв'язок</h1>
+    <p style="text-align: center; color: var(--text-muted); margin-bottom: 2.5rem;">
+        Маєте питання, пропозицію або знайшли помилку? Напишіть нам!
+    </p>
+
+    <div class="card" style="padding: 2.5rem; border-radius: 20px;">
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            <div style="margin-bottom: 1.5rem;">
+                {{ form.subject.label(class="input-label") }}
+                {{ form.subject(class="form-input", placeholder="Наприклад: Проблема з книгою...") }}
+                {% for error in form.subject.errors %}
+                    <span class="form-error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                {{ form.message.label(class="input-label") }}
+                {{ form.message(class="form-input", rows="6", placeholder="Опишіть ваше питання детально...") }}
+                {% for error in form.message.errors %}
+                    <span class="form-error">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%;">
+                Надіслати повідомлення
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .input-label {
+        font-weight: 600; margin-bottom: 0.5rem; display: block; color: var(--text-main);
+    }
+    .form-input {
+        width: 100%; padding: 12px; border-radius: 12px;
+        border: 1px solid var(--border); background: var(--input-bg);
+        color: var(--text-main); outline: none;
+    }
+    .form-input:focus { border-color: var(--accent); }
+    .form-error { color: #DC2626; font-size: 0.85rem; margin-top: 5px; display: block; }
+</style>
+{% endblock %}

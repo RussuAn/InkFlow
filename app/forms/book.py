@@ -8,6 +8,11 @@ class AddBookForm(FlaskForm):
     
     author = StringField('Автор', validators=[DataRequired(), Length(max=100)])
 
+    publication_year = IntegerField('Рік видання', validators=[
+        DataRequired(message="Введіть рік"),
+        NumberRange(min=1000, max=2030, message="Введіть коректний рік")
+    ], default=2024)
+
     genre = SelectField('Жанр', choices=[
         ('Художня література', 'Художня література'),
         ('Фантастика', 'Фантастика'),

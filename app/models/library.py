@@ -67,3 +67,22 @@ def get_books_by_shelf(user_id, status):
     for data in books_data:
         books.append(Book(**data))
     return books
+
+def get_gifted_books(user_id):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    query = """
+        SELECT b.* FROM books b
+        JOIN purchases p ON b.id = p.book_id
+        WHERE p.receiver_id = %s AND p.is_gift = 1
+        ORDER BY p.purchased_at DESC
+    """
+    cursor.execute(query, (user_id,))
+    books_data = cursor.fetchall()
+    cursor.close()
+    
+    books = []
+    for data in books_data:
+        books.append(Book(**data))
+    return books

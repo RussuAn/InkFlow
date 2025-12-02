@@ -92,11 +92,48 @@
     </nav>
     {% endblock %}
     
-    <main style="padding-top: 100px;">
+    <main style="padding-top: 100px; min-height: 80vh;">
         <div class="container">
             {% block content %}{% endblock %}
         </div>
     </main>
+
+    <footer style="margin-top: auto; padding: 4rem 0 2rem; border-top: 1px solid var(--border); background-color: var(--bg-card);">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 4rem; margin-bottom: 3rem;">
+                
+                <div>
+                    <a href="{{ url_for('index') }}" style="font-family: var(--font-head); font-size: 1.8rem; font-weight: 700; color: var(--text-main); text-decoration: none; display: block; margin-bottom: 1rem;">
+                        InkFlow.
+                    </a>
+                    <p style="color: var(--text-muted); max-width: 300px; line-height: 1.6;">
+                        Твій простір для читання, розвитку та натхнення. Читайте будь-де, будь-коли.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 1.2rem;">Проєкт</h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                        <a href="{{ url_for('about') }}" style="color: var(--text-muted); transition: color 0.2s; font-size: 0.95rem;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">Про нас</a>
+                        <a href="{{ url_for('faq') }}" style="color: var(--text-muted); transition: color 0.2s; font-size: 0.95rem;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">Часті питання (FAQ)</a>
+                        <a href="{{ url_for('index') }}" style="color: var(--text-muted); transition: color 0.2s; font-size: 0.95rem;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">Каталог книг</a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 1.2rem;">Допомога</h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                        <a href="{{ url_for('user.contact') }}" style="color: var(--text-muted); transition: color 0.2s; font-size: 0.95rem;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">Зв'язатися з нами</a>
+                        <span style="color: var(--text-muted); font-size: 0.95rem; opacity: 0.5;">Політика конфіденційності</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; padding-top: 2rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.9rem;">
+                &copy; 2025 InkFlow. Курсова робота. Anastasiia Russu.
+            </div>
+        </div>
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {

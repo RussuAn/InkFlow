@@ -5,9 +5,10 @@ from flask_login import login_required, current_user, logout_user
 from app.forms.profile import EditProfileForm
 from app.forms.settings import ChangePasswordForm, DeleteAccountForm
 from app.models.user import update_user_profile, update_password, delete_user
-from app.models.library import get_books_by_shelf
+from app.models.library import get_books_by_shelf, get_gifted_books
 from app.models.commerce import top_up_balance
-
+from app.forms.support import ContactForm
+from app.models.support import create_message
 
 bp = Blueprint('user', __name__, url_prefix='/user')
 
@@ -36,14 +37,15 @@ def profile():
     books_reading = get_books_by_shelf(current_user.id, 'reading')
     books_completed = get_books_by_shelf(current_user.id, 'completed')
     books_planned = get_books_by_shelf(current_user.id, 'planned')
-    
+    books_gifted = get_gifted_books(current_user.id)
 
     return render_template('user/profile.html', 
                            user=current_user,
                            avatar_file=avatar_file,
                            books_reading=books_reading,
                            books_completed=books_completed,
-                           books_planned=books_planned)
+                           books_planned=books_planned,
+                           books_gifted=books_gifted)
 
 
 @bp.route('/edit', methods=['GET', 'POST'])
@@ -115,3 +117,16 @@ def settings():
         return redirect(url_for('index'))
 
     return render_template('user/settings.html', pass_form=pass_form, del_form=del_form)
+
+@bp.route('/contact', methods=['GET', 'POST'])
+@login_required
+def contact():
+    form = ContactForm()
+    if form.validate_on_submit():
+        if create_message(current_user.id, form.subject.data, form.message.data):
+            flash('Ваше повідомлення надіслано адміністрації!', 'success')
+            return redirect(url_for('user.profile'))
+        else:
+            flash('Сталася помилка при відправленні.', 'error')
+            
+    return render_template('support/contact.html', form=form)

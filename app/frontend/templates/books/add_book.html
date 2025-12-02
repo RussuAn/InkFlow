@@ -1,14 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Додати книгу | InkFlow{% endblock %}
-
-{% block navbar %}
-<div style="position: absolute; top: 2rem; right: 2rem; z-index: 50; display: flex; gap: 1rem;">
-    <a href="{{ url_for('index') }}" class="nav-icon-btn" title="На головну" style="background: #3A3532; border: 1px solid #4A4742; color: #EDEDED; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    </a>
-</div>
-{% endblock %}
+{% block title %}Додати нову книгу | InkFlow{% endblock %}
 
 {% block content %}
 <style>
@@ -157,15 +149,25 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                {{ form.price_coins.label(class="form-label") }}
-                <div style="position: relative;">
-                    {{ form.price_coins(class="form-input", placeholder="0") }}
-                    <span style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #B5ADA7;">🪙</span>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="form-group">
+                    {{ form.price_coins.label(class="form-label") }}
+                    <div style="position: relative;">
+                        {{ form.price_coins(class="form-input", placeholder="0") }}
+                        <span style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #B5ADA7;">🪙</span>
+                    </div>
+                    {% for error in form.price_coins.errors %}
+                        <span class="error-msg">{{ error }}</span>
+                    {% endfor %}
                 </div>
-                {% for error in form.price_coins.errors %}
-                    <span class="error-msg">{{ error }}</span>
-                {% endfor %}
+
+                <div class="form-group">
+                    {{ form.publication_year.label(class="form-label") }}
+                    {{ form.publication_year(class="form-input", placeholder="2024") }}
+                    {% for error in form.publication_year.errors %}
+                        <span class="error-msg">{{ error }}</span>
+                    {% endfor %}
+                </div>
             </div>
 
             <div class="form-group">

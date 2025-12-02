@@ -8,17 +8,14 @@
 
     <div style="padding-bottom: 4rem;">
         
-        <div style="text-align: center; margin-bottom: 4rem; padding: 3rem 0;">
+        <div style="text-align: center; margin-bottom: 3rem; padding: 3rem 0;">
             {% if search_query %}
-                
                 <p style="color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px;">Результати пошуку</p>
                 <h1 style="font-size: 2.5rem; margin-bottom: 1.5rem; color: var(--text-main);">"{{ search_query }}"</h1>
                 <a href="{{ url_for('index') }}" class="btn-secondary" style="padding: 10px 25px; font-weight: 500;">
                     &larr; Повернутися до каталогу
                 </a>
-
             {% else %}
-                
                 <h1 style="font-size: 3rem; margin-bottom: 1rem; line-height: 1.2; color: var(--text-main); font-family: var(--font-head);">
                     Відкрийте світ історій
                 </h1>
@@ -36,7 +33,54 @@
             {% endif %}
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h3 style="font-size: 1.5rem; font-family: var(--font-head); color: var(--text-main);">
+                {% if current_genre %}{{ current_genre }}{% else %}Всі книги{% endif %}
+                {% if current_free %}<span style="font-size: 0.8em; color: var(--accent); margin-left: 10px;">(Безкоштовні)</span>{% endif %}
+            </h3>
+
+            <div class="filter-dropdown-wrapper" style="position: relative;">
+                <button id="filter-btn" class="btn-secondary" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                    Фільтрувати
+                </button>
+
+                <div id="filter-menu" class="filter-menu">
+                    
+                    <div style="padding: 8px 12px; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">За ціною</div>
+                    
+                    <a href="{{ url_for('index', genre=current_genre if current_genre else None) }}" class="filter-item {% if not current_free %}active{% endif %}">
+                        <span>Будь-яка ціна</span>
+                        {% if not current_free %}✓{% endif %}
+                    </a>
+                    
+                    <a href="{{ url_for('index', genre=current_genre if current_genre else None, free=1) }}" class="filter-item {% if current_free %}active{% endif %}">
+                        <span>Лише безкоштовні</span>
+                        {% if current_free %}✓{% endif %}
+                    </a>
+
+                    <div style="height: 1px; background: var(--border); margin: 8px 0;"></div>
+
+                    <div style="padding: 8px 12px; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">За жанром</div>
+                    
+                    <a href="{{ url_for('index', free=1 if current_free else None) }}" class="filter-item {% if not current_genre %}active{% endif %}">
+                        <span>Всі жанри</span>
+                        {% if not current_genre %}✓{% endif %}
+                    </a>
+                    
+                    {% set genres = ['Художня література', 'Фантастика', 'Фентезі', 'Детектив', 'Наукова література', 'Психологія', 'Бізнес', 'Історія', 'Інше'] %}
+                    
+                    {% for genre in genres %}
+                    <a href="{{ url_for('index', genre=genre, free=1 if current_free else None) }}" class="filter-item {% if current_genre == genre %}active{% endif %}">
+                        <span>{{ genre }}</span>
+                        {% if current_genre == genre %}✓{% endif %}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
             
             {% for book in books %}
                 <a href="{{ url_for('books.book_detail', book_id=book.id) }}" style="text-decoration: none; color: inherit; display: block;">
@@ -74,15 +118,25 @@
                     </div>
                 </a>
             {% else %}
-                <div style="grid-column: 1/-1; text-align: center; padding: 6rem 0; color: var(--text-muted);">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">😕</div>
+                <div style="grid-column: 1/-1; text-align: center; padding: 6rem 0; color: var(--text-muted); display: flex; flex-direction: column; align-items: center;">
+                    <div style="margin-bottom: 1.5rem; opacity: 0.5;">
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M16 16s-1.5-2-4-2-4 2-4 2"></path>
+                            <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                            <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                        </svg>
+                    </div>
+
                     {% if search_query %}
-                        <p style="font-size: 1.1rem;">Ми нічого не знайшли за запитом "<strong>{{ search_query }}</strong>".</p>
-                        <p style="font-size: 0.9rem;">Спробуйте змінити ключові слова або категорію.</p>
+                        <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">Ми нічого не знайшли за запитом "<strong>{{ search_query }}</strong>".</p>
                     {% else %}
-                        <p style="font-size: 1.1rem;">Бібліотека поки що порожня.</p>
-                        <p style="font-size: 0.9rem;">Завітайте пізніше або додайте першу книгу!</p>
+                        <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">У цій категорії поки що немає книг.</p>
+                        <p style="font-size: 0.95rem; opacity: 0.8;">Спробуйте змінити фільтри або завітайте пізніше.</p>
                     {% endif %}
+                    
+                    <br>
+                    <a href="{{ url_for('index') }}" class="btn-secondary" style="margin-top: 1rem;">Скинути всі фільтри</a>
                 </div>
             {% endfor %}
 
@@ -97,5 +151,63 @@
     .book-card:hover img {
         transform: scale(1.05);
     }
+
+    /* Стилі для меню фільтрів */
+    .filter-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow-elevated);
+        min-width: 220px;
+        z-index: 100;
+        padding: 8px;
+        display: none;
+    }
+    .filter-menu.active {
+        display: block;
+    }
+    .filter-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 8px;
+        color: var(--text-main);
+        text-decoration: none;
+        font-size: 0.95rem;
+        transition: background 0.2s;
+    }
+    .filter-item:hover {
+        background: var(--bg-body);
+    }
+    .filter-item.active {
+        background: var(--input-bg);
+        color: var(--accent);
+        font-weight: 600;
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const filterBtn = document.getElementById('filter-btn');
+        const filterMenu = document.getElementById('filter-menu');
+
+        if (filterBtn && filterMenu) {
+            filterBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                filterMenu.classList.toggle('active');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!filterMenu.contains(e.target) && !filterBtn.contains(e.target)) {
+                    filterMenu.classList.remove('active');
+                }
+            });
+        }
+    });
+</script>
+
 {% endblock %}

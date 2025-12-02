@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_login import LoginManager
 from .core.config import Config
 from .core import db, logger
@@ -37,9 +37,20 @@ def create_app():
 
     @app.route('/')
     def index():
-        books = get_all_books()
-        return render_template('index.html', books=books)
+        genre = request.args.get('genre')
+        only_free = request.args.get('free') == '1'
 
+        books = get_all_books(genre=genre, only_free=only_free)
+        return render_template('index.html', books=books, current_genre=genre, current_free=only_free)
+    
+    @app.route('/about')
+    def about():
+        return render_template('about.html')
+
+    @app.route('/faq')
+    def faq():
+        return render_template('faq.html')
+    
     @app.route('/test-db')
     def test_db():
         try:

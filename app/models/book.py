@@ -2,10 +2,11 @@ from app.core.db import get_db
 import mysql.connector
 
 class Book:
-    def __init__(self, id, title, author, description, cover_image, file_path, price_coins=0, page_count=0, views_count=0, created_at=None, genre=None):
+    def __init__(self, id, title, author,  description, cover_image, file_path, publication_year=None, price_coins=0, page_count=0, views_count=0, created_at=None, genre=None):
         self.id = id
         self.title = title
         self.author = author
+        self.publication_year = publication_year
         self.description = description
         self.cover_image = cover_image
         self.file_path = file_path
@@ -15,15 +16,15 @@ class Book:
         self.created_at = created_at
         self.genre = genre
 
-def create_book(title, author, description, cover_image, file_path, price_coins, page_count, genre):
+def create_book(title, author, publication_year, description, cover_image, file_path, price_coins, page_count, genre):
     db = get_db()
     cursor = db.cursor()
     try:
         query = """
-            INSERT INTO books (title, author, description, cover_image, file_path, price_coins, page_count, genre)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO books (title, author, publication_year, description, cover_image, file_path, price_coins, page_count, genre)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
-        cursor.execute(query, (title, author, description, cover_image, file_path, price_coins, page_count, genre))
+        cursor.execute(query, (title, author, publication_year, description, cover_image, file_path, price_coins, page_count, genre))
         db.commit()
         return True
     except mysql.connector.Error as err:
@@ -32,10 +33,23 @@ def create_book(title, author, description, cover_image, file_path, price_coins,
     finally:
         cursor.close()
 
-def get_all_books():
+def get_all_books(genre=None, only_free=False):
     db = get_db()
     cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM books ORDER BY created_at DESC")
+    
+    query = "SELECT * FROM books WHERE 1=1"
+    params = []
+    
+    if genre:
+        query += " AND genre = %s"
+        params.append(genre)
+    
+    if only_free:
+        query += " AND price_coins = 0"
+        
+    query += " ORDER BY created_at DESC"
+    
+    cursor.execute(query, tuple(params))
     books_data = cursor.fetchall()
     cursor.close()
     

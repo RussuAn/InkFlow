@@ -1,0 +1,74 @@
+body.auth-mode {
+    background-color: #2A2522 !important;
+    color: #EDEDED !important;
+}
+
+.auth-wrapper, .page-wrapper {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 2rem;
+    background-color: #2A2522;
+}
+
+.auth-card, .form-card {
+    background-color: #3A3532;
+    padding: 3rem;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    border: 1px solid #4A4742;
+    color: #EDEDED;
+}
+.form-card { max-width: 600px; }
+
+.auth-header, .form-header { text-align: center; margin-bottom: 2.5rem; }
+.auth-logo { display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
+
+.form-group { margin-bottom: 1.5rem; }
+
+.auth-label, .form-label {
+    display: block; color: #B5ADA7;
+    font-size: 0.9rem; font-weight: 500; margin-bottom: 0.5rem;
+}
+
+.auth-input, .form-input {
+    width: 100%; padding: 12px 16px;
+    background-color: #2A2522;
+    border: 1px solid #4A4742;
+    border-radius: 12px;
+    color: #EDEDED; font-size: 1rem; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.auth-input:focus, .form-input:focus {
+    border-color: #B58A59;
+    box-shadow: 0 0 0 2px rgba(181, 138, 89, 0.2);
+}
+.auth-input::placeholder, .form-input::placeholder { color: #5A5350; opacity: 0.7; }
+
+.auth-button, .form-button {
+    width: 100%; padding: 14px;
+    background-color: #B58A59; color: #FFFFFF;
+    margin-top: 1rem;
+}
+.auth-button:hover, .form-button:hover { background-color: #9D7449; transform: translateY(-1px); }
+
+.auth-footer { text-align: center; margin-top: 2rem; font-size: 0.95rem; }
+.auth-error, .error-msg { color: #F87171; font-size: 0.85rem; margin-top: 0.5rem; display: block; }
+
+.password-toggle {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer; padding: 4px;
+    color: #B5ADA7; opacity: 0.7;
+}
+.password-toggle:hover { opacity: 1; color: #EDEDED; }
+
+.file-upload-wrapper {
+    position: relative; width: 100%; height: 50px;
+    border: 1px dashed #4A4742; border-radius: 12px;
+    background-color: #2A2522;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: border-color 0.2s;
+}
+.file-upload-wrapper:hover { border-color: #B58A59; }
+.file-upload-text { color: #B5ADA7; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
