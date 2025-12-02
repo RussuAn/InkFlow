@@ -43,7 +43,7 @@
 
 ### Крок 1: Клонування репозиторію
 ```bash
-git clone [https://github.com/RussuAn/InkFlow.git]
+git clone https://github.com/RussuAn/InkFlow.git
 cd InkFlow
 ```
 
